@@ -355,7 +355,7 @@ class UNDatabase {
         this.saveData();
     }
     
-    // Méthodes CRUD pour les cotisations
+    // Méthodes CRUD pour les cotisations avec incrémentation automatique
     getContributions() {
         if (this.hasPermission('contributions', 'read')) {
             return this.contributions;
@@ -363,12 +363,44 @@ class UNDatabase {
         throw new Error("Permission denied: Cannot read contributions");
     }
     
+    // Obtenir le montant total des cotisations pour un membre
+    getTotalContributionsForMember(memberId) {
+        return this.contributions
+            .filter(c => c.memberId === memberId)
+            .reduce((total, contribution) => total + contribution.amount, 0);
+    }
+    
+    // Obtenir le nombre de cotisations pour un membre
+    getCountContributionsForMember(memberId) {
+        return this.contributions
+            .filter(c => c.memberId === memberId)
+            .length;
+    }
+    
     addContribution(contributionData) {
         if (this.hasPermission('contributions', 'create')) {
+            // Vérifier s'il s'agit d'une cotisation supplémentaire pour le même membre
+            const existingContributions = this.contributions.filter(
+                c => c.memberId === contributionData.memberId
+            );
+            
+            // Incrémenter automatiquement le montant si le membre a déjà des cotisations
+            let incrementedAmount = contributionData.amount;
+            if (existingContributions.length > 0) {
+                // Option 1: Incrémenter de 10% à chaque fois (vous pouvez ajuster cette logique)
+                incrementedAmount = contributionData.amount * (1 + (existingContributions.length * 0.1));
+                
+                // Option 2: Ajouter un montant fixe (décommentez si vous préférez cette approche)
+                // incrementedAmount = contributionData.amount + (existingContributions.length * 500);
+            }
+            
             const newContribution = {
                 id: this.nextIds.contribution++,
-                ...contributionData
+                ...contributionData,
+                amount: incrementedAmount, // Utiliser le montant incrémenté
+                createdAt: new Date().toISOString() // Ajouter la date de création
             };
+            
             this.contributions.push(newContribution);
             this.saveData(); // Sauvegarder les changements
             return newContribution;

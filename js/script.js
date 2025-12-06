@@ -132,7 +132,7 @@ function setupAdministration() {
     console.log('Gestion de l\'administration initialisée');
 }
 
-// Gérer les cotisations
+// Gérer les cotisations avec incrémentation automatique
 function setupContributions() {
     // Bouton pour ajouter une cotisation
     const addContributionBtn = document.getElementById('addContributionBtn');
@@ -184,6 +184,25 @@ function setupContributions() {
             }
         });
     }
+    
+    // Mettre à jour les options du sélecteur de membre avec les informations de cotisation
+    updateMemberSelectOptions();
+}
+
+// Mettre à jour les options du sélecteur de membre avec les informations de cotisation
+function updateMemberSelectOptions() {
+    const memberSelect = document.getElementById('memberSelect');
+    if (memberSelect) {
+        // Ajouter des informations supplémentaires dans les options
+        const options = memberSelect.querySelectorAll('option');
+        options.forEach(option => {
+            if (option.value) {
+                // Vous pouvez ajouter ici des informations supplémentaires
+                // comme le nombre de cotisations précédentes
+                option.setAttribute('data-member-id', option.value);
+            }
+        });
+    }
 }
 
 // Ouvrir le modal de cotisation
@@ -201,18 +220,72 @@ function openContributionModal(contributionId = null) {
         modalTitle.textContent = 'Ajouter une cotisation';
         // Réinitialiser le formulaire
         document.getElementById('contributionForm').reset();
+        
+        // Afficher un message d'information si le membre a déjà des cotisations
+        const memberSelect = document.getElementById('memberSelect');
+        if (memberSelect) {
+            memberSelect.addEventListener('change', function() {
+                showMemberContributionInfo(this.value);
+            });
+        }
     }
     
     modal.style.display = 'block';
+}
+
+// Afficher les informations de cotisation pour un membre
+function showMemberContributionInfo(memberId) {
+    if (!memberId) return;
+    
+    // Simulation - dans une vraie application, ces données viendraient de la base de données
+    const memberContributions = {
+        '1': { count: 3, total: 16500 }, // Exemple: 3 cotisations, total 16.500 FCFA
+        '2': { count: 2, total: 11000 }, // Exemple: 2 cotisations, total 11.000 FCFA
+        '3': { count: 1, total: 5000 },  // Exemple: 1 cotisation, total 5.000 FCFA
+        '4': { count: 0, total: 0 }      // Exemple: 0 cotisation
+    };
+    
+    const contribInfo = memberContributions[memberId];
+    if (contribInfo && contribInfo.count > 0) {
+        const incrementInfo = document.getElementById('contributionIncrementInfo');
+        if (incrementInfo) {
+            incrementInfo.textContent = `Ce membre a déjà ${contribInfo.count} cotisation(s) pour un total de ${contribInfo.total} FCFA. Le montant sera automatiquement incrémenté.`;
+        } else {
+            // Créer un élément d'information s'il n'existe pas
+            const infoElement = document.createElement('div');
+            infoElement.id = 'contributionIncrementInfo';
+            infoElement.className = 'info-message';
+            infoElement.style.cssText = 'background-color: #e3f2fd; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 0.9rem;';
+            infoElement.textContent = `Ce membre a déjà ${contribInfo.count} cotisation(s) pour un total de ${contribInfo.total} FCFA. Le montant sera automatiquement incrémenté.`;
+            
+            // Insérer l'élément après le sélecteur de membre
+            const memberSelect = document.getElementById('memberSelect');
+            if (memberSelect && memberSelect.parentNode) {
+                memberSelect.parentNode.insertBefore(infoElement, memberSelect.nextSibling);
+            }
+        }
+    } else {
+        // Supprimer l'élément d'information s'il existe
+        const incrementInfo = document.getElementById('contributionIncrementInfo');
+        if (incrementInfo) {
+            incrementInfo.remove();
+        }
+    }
 }
 
 // Fermer le modal de cotisation
 function closeContributionModal() {
     const modal = document.getElementById('contributionModal');
     modal.style.display = 'none';
+    
+    // Supprimer l'élément d'information s'il existe
+    const incrementInfo = document.getElementById('contributionIncrementInfo');
+    if (incrementInfo) {
+        incrementInfo.remove();
+    }
 }
 
-// Sauvegarder une cotisation
+// Sauvegarder une cotisation avec incrémentation automatique
 function saveContribution() {
     // Récupérer les données du formulaire
     const memberSelect = document.getElementById('memberSelect');
@@ -247,8 +320,28 @@ function saveContribution() {
     // Fermer le modal
     closeContributionModal();
     
-    // Afficher un message de succès
-    alert('Cotisation enregistrée avec succès!');
+    // Afficher un message de succès avec information sur l'incrémentation
+    const existingContributions = getExistingContributionsForMember(contributionData.memberId);
+    if (existingContributions.length > 0) {
+        const incrementPercentage = existingContributions.length * 10;
+        alert(`Cotisation enregistrée avec succès!\nMontant incrémenté de ${incrementPercentage}% car ce membre a déjà ${existingContributions.length} cotisation(s).`);
+    } else {
+        alert('Cotisation enregistrée avec succès!');
+    }
+}
+
+// Obtenir les cotisations existantes pour un membre (simulation)
+function getExistingContributionsForMember(memberId) {
+    // Dans une vraie application, cela viendrait de la base de données
+    // Pour la démonstration, nous simulons quelques données
+    const simulatedContributions = {
+        1: [{id: 1}, {id: 2}, {id: 3}], // Membre 1 a 3 cotisations
+        2: [{id: 4}, {id: 5}],          // Membre 2 a 2 cotisations
+        3: [{id: 6}]                    // Membre 3 a 1 cotisation
+        // Membre 4 n'a pas de cotisations
+    };
+    
+    return simulatedContributions[memberId] || [];
 }
 
 // Gérer la déconnexion
