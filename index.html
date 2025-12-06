@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UN - Gestion d'Association</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- En-tête -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>UN</h1>
+                <span>Gestion d'Association</span>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li>
+                        <a href="#" class="nav-link active" data-page="dashboard">TABLEAU DE BORD</a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link" data-page="members">MEMBRES</a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link" data-page="events">ÉVÉNEMENTS</a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link" data-page="reports">RAPPORTS</a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link" data-page="administration">ADMINISTRATION</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <div class="user-info" id="userInfo">
+                    <span id="userName">Administrateur</span>
+                    <button id="logoutBtn" class="btn btn-secondary" style="margin-left: 15px; padding: 5px 10px;">Déconnexion</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Tableau de bord -->
+            <section id="dashboard" class="page active">
+                <h2>TABLEAU DE BORD</h2>
+                <div id="adminMessage" class="admin-message" style="display: none; background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <p><strong>Note pour l'administrateur :</strong> Pour gérer les utilisateurs (créer, modifier, supprimer), veuillez utiliser la section "Administration" dans le menu de navigation.</p>
+                </div>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3 id="totalMembers">128</h3>
+                        <p>Membres</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="activeMembers">115</h3>
+                        <p>Membres Actifs</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="totalEvents">24</h3>
+                        <p>Événements</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="upcomingEvents">8</h3>
+                        <p>Événements à venir</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="totalFinances">5.240 FCFA</h3>
+                        <p>Fonds disponibles</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="totalUsers">5</h3>
+                        <p>Utilisateurs</p>
+                    </div>
+                </div>
+                
+                <div class="recent-activity">
+                    <h3>Activité récente</h3>
+                    <ul>
+                        <li><i class="fas fa-user-plus"></i> Nouveau membre inscrit - Marie Dupont <span class="time">Il y a 2 heures</span></li>
+                        <li><i class="fas fa-calendar-check"></i> Événement "Nettoyage urbain" programmé <span class="time">Hier</span></li>
+                        <li><i class="fas fa-money-bill-wave"></i> Cotisation reçue de Jean Martin <span class="time">Hier</span></li>
+                        <li><i class="fas fa-file-invoice"></i> Rapport mensuel généré <span class="time">3 jours ago</span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Page Membres -->
+            <section id="members" class="page">
+                <h2>MEMBRES</h2>
+                <div class="members-actions">
+                    <button class="btn btn-primary" id="addMemberBtn"><i class="fas fa-plus"></i> Ajouter un membre</button>
+                    <div class="search-box">
+                        <input type="text" id="searchMembers" placeholder="Rechercher un membre...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                
+                <div class="members-table-container">
+                    <table class="members-table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Rôle</th>
+                                <th>Date d'adhésion</th>
+                                <th>Statut</th>
+                                <th>Utilisateur associé</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersTableBody">
+                            <tr>
+                                <td>Pierre Dubois</td>
+                                <td>pierre.dubois@un-association.fcfa</td>
+                                <td>Président</td>
+                                <td>15/01/2020</td>
+                                <td><span class="status active">Actif</span></td>
+                                <td><span class="status active">Oui</span></td>
+                                <td>
+                                    <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Marie Lambert</td>
+                                <td>marie.lambert@un-association.fcfa</td>
+                                <td>Secrétaire</td>
+                                <td>22/03/2021</td>
+                                <td><span class="status active">Actif</span></td>
+                                <td><span class="status active">Oui</span></td>
+                                <td>
+                                    <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Jean Martin</td>
+                                <td>jean.martin@un-association.fcfa</td>
+                                <td>Trésorier</td>
+                                <td>10/06/2020</td>
+                                <td><span class="status inactive">Inactif</span></td>
+                                <td><span class="status active">Oui</span></td>
+                                <td>
+                                    <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Sophie Leroy</td>
+                                <td>sophie.leroy@un-association.fcfa</td>
+                                <td>Membre</td>
+                                <td>30/08/2024</td>
+                                <td><span class="status active">Actif</span></td>
+                                <td><span class="status active">Oui</span></td>
+                                <td>
+                                    <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Page Événements -->
+            <section id="events" class="page">
+                <h2>ÉVÉNEMENTS</h2>
+                <div class="events-actions">
+                    <button class="btn btn-primary" id="addEventBtn">Ajouter un événement</button>
+                    <div class="search-box">
+                        <input type="text" id="searchEvents" placeholder="Rechercher un événement...">
+                    </div>
+                </div>
+                
+                <div class="events-grid">
+                    <div class="event-card">
+                        <h3>Assemblée générale annuelle</h3>
+                        <div class="event-date"><i class="far fa-calendar-alt"></i> 15 décembre 2024</div>
+                        <div class="event-location"><i class="fas fa-map-marker-alt"></i> Salle des fêtes, 123 Rue de la Paix</div>
+                        <div class="event-description">
+                            Assemblée générale pour discuter des activités de l'année et du budget.
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn btn-secondary edit"><i class="fas fa-edit"></i> Modifier</button>
+                            <button class="btn btn-danger delete"><i class="fas fa-trash"></i> Supprimer</button>
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <h3>Nettoyage urbain</h3>
+                        <div class="event-date"><i class="far fa-calendar-alt"></i> 20 décembre 2024</div>
+                        <div class="event-location"><i class="fas fa-map-marker-alt"></i> Place de la Mairie</div>
+                        <div class="event-description">
+                            Action de nettoyage participatif avec les membres de l'association.
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn btn-secondary edit"><i class="fas fa-edit"></i> Modifier</button>
+                            <button class="btn btn-danger delete"><i class="fas fa-trash"></i> Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Page Rapports -->
+            <section id="reports" class="page">
+                <h2>RAPPORTS</h2>
+                <div class="reports-actions">
+                    <button class="btn btn-primary" id="generateReportBtn">Générer un rapport</button>
+                    <div class="search-box">
+                        <input type="text" id="searchReports" placeholder="Rechercher un rapport...">
+                    </div>
+                </div>
+                
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h3>Rapport financier mensuel</h3>
+                        <div class="report-period">Novembre 2024</div>
+                        <div class="report-status">Généré le 01/12/2024</div>
+                        <div class="report-actions">
+                            <button class="btn btn-secondary"><i class="fas fa-download"></i> Télécharger</button>
+                            <button class="btn btn-secondary"><i class="fas fa-eye"></i> Voir</button>
+                        </div>
+                    </div>
+                    
+                    <div class="report-card">
+                        <h3>Rapport d'activités trimestriel</h3>
+                        <div class="report-period">Octobre - Décembre 2024</div>
+                        <div class="report-status">En cours</div>
+                        <div class="report-actions">
+                            <button class="btn btn-secondary" disabled><i class="fas fa-download"></i> Télécharger</button>
+                            <button class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                        </div>
+                    </div>
+                    
+                    <div class="report-card">
+                        <h3>Rapport annuel</h3>
+                        <div class="report-period">2024</div>
+                        <div class="report-status">Généré le 15/01/2025</div>
+                        <div class="report-actions">
+                            <button class="btn btn-secondary"><i class="fas fa-download"></i> Télécharger</button>
+                            <button class="btn btn-secondary"><i class="fas fa-eye"></i> Voir</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Page Administration Principale -->
+            <section id="administration" class="page">
+                <h2>ADMINISTRATION</h2>
+                <div class="admin-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-button active" data-tab="users">Gestion des Utilisateurs</button>
+                        <button class="tab-button" data-tab="profiles">Profils</button>
+                        <button class="tab-button" data-tab="settings">Paramètres</button>
+                    </div>
+                    
+                    <!-- Onglet Gestion des Utilisateurs -->
+                    <div id="users-tab" class="tab-content active">
+                        <div class="profiles-actions">
+                            <button class="btn btn-primary" id="addUserBtn"><i class="fas fa-plus"></i> Ajouter un utilisateur</button>
+                            <div class="search-box">
+                                <input type="text" id="searchUsers" placeholder="Rechercher un utilisateur...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="profiles-table-container">
+                            <table class="profiles-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom complet</th>
+                                        <th>Nom d'utilisateur</th>
+                                        <th>Email</th>
+                                        <th>Rôle</th>
+                                        <th>Date d'inscription</th>
+                                        <th>Dernière connexion</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Les utilisateurs seront insérés ici par JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Onglet Profils -->
+                    <div id="profiles-tab" class="tab-content">
+                        <h3>PROFILS UTILISATEURS</h3>
+                        <div class="profiles-actions">
+                            <button class="btn btn-primary" id="addProfileBtn"><i class="fas fa-plus"></i> Ajouter un profil</button>
+                            <div class="search-box">
+                                <input type="text" id="searchProfiles" placeholder="Rechercher un profil...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="profiles-table-container">
+                            <table class="profiles-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Rôle</th>
+                                        <th>Date d'inscription</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="profilesTableBody">
+                                    <tr>
+                                        <td>Pierre Dubois</td>
+                                        <td>pierre.dubois@email.com</td>
+                                        <td>Administrateur</td>
+                                        <td>12/01/2024</td>
+                                        <td><span class="status active">Actif</span></td>
+                                        <td>
+                                            <button class="btn-icon edit" data-id="1"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-icon delete" data-id="1"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Marie Lambert</td>
+                                        <td>marie.lambert@email.com</td>
+                                        <td>Membre</td>
+                                        <td>02/15/2024</td>
+                                        <td><span class="status active">Actif</span></td>
+                                        <td>
+                                            <button class="btn-icon edit" data-id="2"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-icon delete" data-id="2"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jean Martin</td>
+                                        <td>jean.martin@email.com</td>
+                                        <td>Trésorier</td>
+                                        <td>05/22/2023</td>
+                                        <td><span class="status inactive">Inactif</span></td>
+                                        <td>
+                                            <button class="btn-icon edit" data-id="3"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-icon delete" data-id="3"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sophie Leroy</td>
+                                        <td>sophie.leroy@email.com</td>
+                                        <td>Membre</td>
+                                        <td>08/30/2024</td>
+                                        <td><span class="status active">Actif</span></td>
+                                        <td>
+                                            <button class="btn-icon edit" data-id="4"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-icon delete" data-id="4"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Onglet Paramètres -->
+                    <div id="settings-tab" class="tab-content">
+                        <h3>PARAMÈTRES</h3>
+                        <form id="settingsForm">
+                            <div class="settings-container">
+                                <div class="setting-section">
+                                    <h4>Informations de l'association</h4>
+                                    <div class="form-group">
+                                        <label for="associationName">Nom de l'association</label>
+                                        <input type="text" id="associationName" value="UN - Union Nationale">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="associationEmail">Email de contact</label>
+                                        <input type="email" id="associationEmail" value="contact@un-association.fcfa">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="associationAddress">Adresse</label>
+                                        <textarea id="associationAddress" rows="3">123 Rue de l'Association, 75001 Paris, France</textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-section">
+                                    <h4>Paramètres de sécurité</h4>
+                                    <div class="form-group">
+                                        <label for="currentPassword">Mot de passe actuel</label>
+                                        <input type="password" id="currentPassword">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newPassword">Nouveau mot de passe</label>
+                                        <input type="password" id="newPassword">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confirmPassword">Confirmer le nouveau mot de passe</label>
+                                        <input type="password" id="confirmPassword">
+                                    </div>
+                                </div>
+                                
+                                <div class="setting-section">
+                                    <h4>Notifications</h4>
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="emailNotifications" checked>
+                                        <label for="emailNotifications">Envoyer des notifications par email</label>
+                                    </div>
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="smsNotifications">
+                                        <label for="smsNotifications">Envoyer des notifications par SMS</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary" id="cancelSettings">Retour</button>
+                                    <button type="submit" class="btn btn-primary">Valider</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal pour ajouter/modifier un membre -->
+    <div class="modal" id="memberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Ajouter un membre</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="memberForm">
+                    <div class="form-group">
+                        <label for="memberName">Nom complet</label>
+                        <input type="text" id="memberName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberEmail">Email</label>
+                        <input type="email" id="memberEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberRole">Rôle</label>
+                        <select id="memberRole" required>
+                            <option value="">Sélectionnez un rôle</option>
+                            <option value="Président">Président</option>
+                            <option value="Secrétaire">Secrétaire</option>
+                            <option value="Trésorier">Trésorier</option>
+                            <option value="Membre">Membre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberStatus">Statut</label>
+                        <select id="memberStatus" required>
+                            <option value="actif">Actif</option>
+                            <option value="inactif">Inactif</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="createUserAccount">
+                            <input type="checkbox" id="createUserAccount" checked> 
+                            Créer un compte utilisateur associé
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelMember">Retour</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour ajouter/modifier un événement -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="eventModalTitle">Ajouter un événement</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <div class="form-group">
+                        <label for="eventTitle">Titre</label>
+                        <input type="text" id="eventTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDate">Date</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventTime">Heure</label>
+                        <input type="time" id="eventTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventLocation">Lieu</label>
+                        <input type="text" id="eventLocation" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDescription">Description</label>
+                        <textarea id="eventDescription" rows="4" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelEvent">Retour</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour ajouter/modifier un utilisateur -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="userModalTitle">Ajouter un utilisateur</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Nom complet</label>
+                            <input type="text" id="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Nom d'utilisateur</label>
+                            <input type="text" id="username" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Téléphone</label>
+                            <input type="tel" id="phone">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="role">Rôle</label>
+                            <select id="role" required>
+                                <option value="">Sélectionnez un rôle</option>
+                                <option value="superadmin">Super Administrateur</option>
+                                <option value="administrateur">Administrateur</option>
+                                <option value="trésorier">Trésorier</option>
+                                <option value="secrétaire">Secrétaire</option>
+                                <option value="membre">Membre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Statut</label>
+                            <select id="status" required>
+                                <option value="actif">Actif</option>
+                                <option value="inactif">Inactif</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="password" id="password" required>
+                            <button type="button" id="generatePassword" class="btn btn-secondary">Générer</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmer le mot de passe</label>
+                        <input type="password" id="confirmPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="permissions">Permissions spéciales</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="canExport">
+                            <label for="canExport">Peut exporter des données</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="canDelete">
+                            <label for="canDelete">Peut supprimer des enregistrements</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="canModifySettings">
+                            <label for="canModifySettings">Peut modifier les paramètres</label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelUser">Retour</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour ajouter/modifier un profil -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="profileModalTitle">Ajouter un profil</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <input type="hidden" id="profileId">
+                    <div class="form-group">
+                        <label for="profileName">Nom complet</label>
+                        <input type="text" id="profileName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileEmail">Email</label>
+                        <input type="email" id="profileEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileRole">Rôle</label>
+                        <select id="profileRole" required>
+                            <option value="">Sélectionnez un rôle</option>
+                            <option value="superadmin">Super Administrateur</option>
+                            <option value="Administrateur">Administrateur</option>
+                            <option value="Trésorier">Trésorier</option>
+                            <option value="Secrétaire">Secrétaire</option>
+                            <option value="Membre">Membre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileStatus">Statut</label>
+                        <select id="profileStatus" required>
+                            <option value="actif">Actif</option>
+                            <option value="inactif">Inactif</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileBio">Biographie</label>
+                        <textarea id="profileBio" rows="4"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelProfile">Retour</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour générer un rapport -->
+    <div class="modal" id="reportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Générer un rapport</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="reportForm">
+                    <div class="form-group">
+                        <label for="reportType">Type de rapport</label>
+                        <select id="reportType" required>
+                            <option value="">Sélectionnez un type de rapport</option>
+                            <option value="financial">Rapport financier</option>
+                            <option value="activities">Rapport d'activités</option>
+                            <option value="members">Rapport des membres</option>
+                            <option value="events">Rapport des événements</option>
+                            <option value="annual">Rapport annuel</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate">Date de début</label>
+                            <input type="date" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">Date de fin</label>
+                            <input type="date" id="endDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reportFormat">Format du rapport</label>
+                        <select id="reportFormat" required>
+                            <option value="pdf">PDF</option>
+                            <option value="excel">Excel</option>
+                            <option value="csv">CSV</option>
+                            <option value="html">HTML</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="includeCharts" checked> 
+                            Inclure les graphiques
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="includeSummary" checked> 
+                            Inclure le résumé
+                        </label>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelReport">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Générer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

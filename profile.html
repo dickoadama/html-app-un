@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UN - Profil Administrateur</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- En-tête -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>UN</h1>
+                <span>Gestion d'Association</span>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li><a href="index.html" class="nav-link">TABLEAU DE BORD</a></li>
+                    <li><a href="index.html#members" class="nav-link">MEMBRES</a></li>
+                    <li><a href="index.html#events" class="nav-link">ÉVÉNEMENTS</a></li>
+                    <li><a href="index.html#reports" class="nav-link">RAPPORTS</a></li>
+                    <li><a href="index.html#administration" class="nav-link">ADMINISTRATION</a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <div class="user-info" id="userInfo">
+                    <span id="userName">Administrateur</span>
+                    <button id="logoutBtn" class="btn btn-secondary" style="margin-left: 15px; padding: 5px 10px;">Déconnexion</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Profil Administrateur -->
+            <section id="admin-profile" class="page active">
+                <h2><i class="fas fa-user-circle"></i> PROFIL ADMINISTRATEUR</h2>
+                
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle" style="font-size: 5rem; color: #3498db;"></i>
+                        </div>
+                        <div class="profile-basic-info">
+                            <h3 id="profileFullName">Nom Complet</h3>
+                            <p id="profileRole">Rôle</p>
+                            <p id="profileEmail">email@example.com</p>
+                            <p id="profilePhone">+221 XX XXX XX XX</p>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-details">
+                        <h3>Détails du Profil</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>ID Utilisateur:</label>
+                                <span id="profileId">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Nom d'utilisateur:</label>
+                                <span id="profileUsername">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Date d'inscription:</label>
+                                <span id="profileRegistrationDate">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Dernière connexion:</label>
+                                <span id="profileLastLogin">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <label>Statut:</label>
+                                <span id="profileStatus">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-permissions">
+                        <h3>Permissions</h3>
+                        <div class="permissions-grid">
+                            <div class="permission-category">
+                                <h4>Utilisateurs</h4>
+                                <ul id="userPermissions">
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Lecture</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Écriture</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Suppression</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Création</li>
+                                </ul>
+                            </div>
+                            <div class="permission-category">
+                                <h4>Membres</h4>
+                                <ul id="memberPermissions">
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Lecture</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Écriture</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Suppression</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Création</li>
+                                </ul>
+                            </div>
+                            <div class="permission-category">
+                                <h4>Événements</h4>
+                                <ul id="eventPermissions">
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Lecture</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Écriture</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Suppression</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Création</li>
+                                </ul>
+                            </div>
+                            <div class="permission-category">
+                                <h4>Rapports</h4>
+                                <ul id="reportPermissions">
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Lecture</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Écriture</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Suppression</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Création</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Génération</li>
+                                </ul>
+                            </div>
+                            <div class="permission-category">
+                                <h4>Finances</h4>
+                                <ul id="financePermissions">
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Lecture</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Écriture</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Suppression</li>
+                                    <li><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Création</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button class="btn btn-primary" id="editProfileBtn"><i class="fas fa-edit"></i> Modifier le Profil</button>
+                        <button class="btn btn-secondary" id="changePasswordBtn"><i class="fas fa-key"></i> Changer le Mot de Passe</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal pour modifier le profil -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Modifier le Profil</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label for="editFullName">Nom complet</label>
+                        <input type="text" id="editFullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Téléphone</label>
+                        <input type="tel" id="editPhone">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelEditProfile">Retour</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour changer le mot de passe -->
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Changer le Mot de Passe</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Mot de passe actuel</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Nouveau mot de passe</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmNewPassword">Confirmer le nouveau mot de passe</label>
+                        <input type="password" id="confirmNewPassword" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelChangePassword">Retour</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>

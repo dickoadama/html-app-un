@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UN - Connexion</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-logo">
+            <h1>UN</h1>
+            <p>Gestion d'Association</p>
+            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.9;">
+                Connectez-vous pour accéder à votre espace d'administration
+            </p>
+        </div>
+        <div class="login-form-container">
+            <h2>CONNEXION</h2>
+            <div id="errorMessage" class="error-message" style="display: none; background: #ffebee; color: #c62828; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 0.85rem;">
+                <!-- Message d'erreur sera inséré ici -->
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary login-btn">Se connecter</button>
+            </form>
+            
+            <div class="login-help">
+                <h3>Comptes de démonstration</h3>
+                <ul>
+                    <li><strong>Super Administrateur</strong> - Nom d'utilisateur: <code>superadmin</code>, Mot de passe: <code>superadmin123</code></li>
+                    <li><strong>Administrateur</strong> - Nom d'utilisateur: <code>admin</code>, Mot de passe: <code>admin123</code></li>
+                    <li><strong>Trésorier</strong> - Nom d'utilisateur: <code>jean.martin</code>, Mot de passe: <code>jean123</code></li>
+                    <li><strong>Secrétaire</strong> - Nom d'utilisateur: <code>marie.lambert</code>, Mot de passe: <code>marie123</code></li>
+                    <li><strong>Membre</strong> - Nom d'utilisateur: <code>pierre.dubois</code>, Mot de passe: <code>pierre123</code></li>
+                </ul>
+                <p style="margin-top: 15px; font-size: 0.8rem; color: #666;">
+                    <i class="fas fa-info-circle"></i> Note: Ces comptes sont à des fins de démonstration uniquement.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

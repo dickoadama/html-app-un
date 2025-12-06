@@ -1,0 +1,786 @@
+// Système de base de données simulée pour l'application UN
+// Ce fichier gère les données de l'application avec différents niveaux d'accès
+
+class UNDatabase {
+    constructor() {
+        // Charger les données depuis localStorage ou initialiser avec des données par défaut
+        this.loadData();
+    }
+    
+    // Méthode pour charger les données depuis localStorage
+    loadData() {
+        const savedData = localStorage.getItem('unAppData');
+        
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            this.users = data.users || [];
+            this.members = data.members || [];
+            this.events = data.events || [];
+            this.reports = data.reports || [];
+            this.finances = data.finances || [];
+            this.nextIds = data.nextIds || {user: 6, member: 5, event: 3, report: 4, finance: 3};
+        } else {
+            // Données par défaut si aucune donnée sauvegardée
+            this.initializeDefaultData();
+        }
+        
+        // Définition des permissions par rôle
+        this.permissions = {
+            superadmin: {
+                users: ["read", "write", "delete", "create"],
+                members: ["read", "write", "delete", "create"],
+                events: ["read", "write", "delete", "create"],
+                reports: ["read", "write", "delete", "create", "generate"],
+                finances: ["read", "write", "delete", "create"]
+            },
+            administrateur: {
+                users: ["read", "write", "delete", "create"],
+                members: ["read", "write", "delete", "create"],
+                events: ["read", "write", "delete", "create"],
+                reports: ["read", "write", "delete", "create", "generate"],
+                finances: ["read", "write", "delete", "create"]
+            },
+            trésorier: {
+                users: ["read"],
+                members: ["read"],
+                events: ["read"],
+                reports: ["read", "generate"],
+                finances: ["read", "write", "create"]
+            },
+            secrétaire: {
+                users: ["read"],
+                members: ["read", "write", "create"],
+                events: ["read", "write", "create"],
+                reports: ["read"],
+                finances: ["read"]
+            },
+            membre: {
+                users: [],
+                members: ["read"],
+                events: ["read"],
+                reports: ["read"],
+                finances: []
+            }
+        };
+        
+        // Utilisateur actuellement connecté
+        this.currentUser = null;
+    }
+    
+    // Méthode pour sauvegarder les données dans localStorage
+    saveData() {
+        const data = {
+            users: this.users,
+            members: this.members,
+            events: this.events,
+            reports: this.reports,
+            finances: this.finances,
+            nextIds: this.nextIds
+        };
+        
+        localStorage.setItem('unAppData', JSON.stringify(data));
+    }
+    
+    // Initialiser les données par défaut
+    initializeDefaultData() {
+        this.nextIds = {
+            user: 6,
+            member: 5,
+            event: 3,
+            report: 4,
+            finance: 3
+        };
+        
+        // Chaque membre est aussi un utilisateur
+        this.users = [
+            {
+                id: 1,
+                username: "superadmin",
+                password: "superadmin123",
+                role: "superadmin",
+                fullName: "Super Administrateur",
+                email: "superadmin@un-association.fcfa",
+                phone: "+221 11 111 11 11",
+                dateInscription: "2024-01-01",
+                lastLogin: "2024-12-05",
+                status: "actif",
+                permissions: {
+                    canExport: true,
+                    canDelete: true,
+                    canModifySettings: true
+                }
+            },
+            {
+                id: 2,
+                username: "admin",
+                password: "admin123",
+                role: "administrateur",
+                fullName: "Administrateur Principal",
+                email: "admin@un-association.fcfa",
+                phone: "+221 12 345 67 89",
+                dateInscription: "2024-01-15",
+                lastLogin: "2024-12-05",
+                status: "actif",
+                permissions: {
+                    canExport: true,
+                    canDelete: true,
+                    canModifySettings: true
+                }
+            },
+            {
+                id: 3,
+                username: "jean.martin",
+                password: "jean123",
+                role: "trésorier",
+                fullName: "Jean Martin",
+                email: "jean.martin@un-association.fcfa",
+                phone: "+221 98 765 43 21",
+                dateInscription: "2024-01-20",
+                lastLogin: "2024-12-04",
+                status: "actif",
+                permissions: {
+                    canExport: false,
+                    canDelete: false,
+                    canModifySettings: false
+                }
+            },
+            {
+                id: 4,
+                username: "marie.lambert",
+                password: "marie123",
+                role: "secrétaire",
+                fullName: "Marie Lambert",
+                email: "marie.lambert@un-association.fcfa",
+                phone: "+221 45 678 90 12",
+                dateInscription: "2024-01-22",
+                lastLogin: "2024-12-03",
+                status: "actif",
+                permissions: {
+                    canExport: false,
+                    canDelete: false,
+                    canModifySettings: false
+                }
+            },
+            {
+                id: 5,
+                username: "pierre.dubois",
+                password: "pierre123",
+                role: "membre",
+                fullName: "Pierre Dubois",
+                email: "pierre.dubois@un-association.fcfa",
+                phone: "+221 33 444 55 66",
+                dateInscription: "2024-02-01",
+                lastLogin: "2024-12-02",
+                status: "actif",
+                permissions: {
+                    canExport: false,
+                    canDelete: false,
+                    canModifySettings: false
+                }
+            }
+        ];
+        
+        // Informations supplémentaires sur les membres (liées aux utilisateurs)
+        this.members = [
+            {
+                id: 1,
+                userId: 1, // Lien vers l'utilisateur Super Admin
+                fullName: "Super Administrateur",
+                email: "superadmin@un-association.fcfa",
+                role: "Super Admin",
+                dateAdhesion: "2020-01-01",
+                status: "actif"
+            },
+            {
+                id: 2,
+                userId: 2, // Lien vers l'utilisateur Admin
+                fullName: "Administrateur Principal",
+                email: "admin@un-association.fcfa",
+                role: "Administrateur",
+                dateAdhesion: "2020-01-15",
+                status: "actif"
+            },
+            {
+                id: 3,
+                userId: 3, // Lien vers l'utilisateur Jean Martin
+                fullName: "Jean Martin",
+                email: "jean.martin@un-association.fcfa",
+                role: "Trésorier",
+                dateAdhesion: "2020-06-10",
+                status: "actif"
+            },
+            {
+                id: 4,
+                userId: 4, // Lien vers l'utilisateur Marie Lambert
+                fullName: "Marie Lambert",
+                email: "marie.lambert@un-association.fcfa",
+                role: "Secrétaire",
+                dateAdhesion: "2021-03-22",
+                status: "actif"
+            },
+            {
+                id: 5,
+                userId: 5, // Lien vers l'utilisateur Pierre Dubois
+                fullName: "Pierre Dubois",
+                email: "pierre.dubois@un-association.fcfa",
+                role: "Membre",
+                dateAdhesion: "2020-01-15",
+                status: "actif"
+            }
+        ];
+        
+        this.events = [
+            {
+                id: 1,
+                title: "Assemblée générale annuelle",
+                date: "2024-12-15",
+                time: "14:00",
+                location: "Salle des fêtes, 123 Rue de la Paix",
+                description: "Assemblée générale pour discuter des activités de l'année et du budget.",
+                status: "programmé"
+            },
+            {
+                id: 2,
+                title: "Nettoyage urbain",
+                date: "2024-12-20",
+                time: "09:00",
+                location: "Place de la Mairie",
+                description: "Action de nettoyage participatif avec les membres de l'association.",
+                status: "programmé"
+            }
+        ];
+        
+        this.reports = [
+            {
+                id: 1,
+                title: "Rapport financier mensuel",
+                period: "Novembre 2024",
+                generatedDate: "2024-12-01",
+                status: "généré"
+            },
+            {
+                id: 2,
+                title: "Rapport d'activités trimestriel",
+                period: "Octobre - Décembre 2024",
+                generatedDate: null,
+                status: "en cours"
+            },
+            {
+                id: 3,
+                title: "Rapport annuel",
+                period: "2024",
+                generatedDate: "2025-01-15",
+                status: "généré"
+            }
+        ];
+        
+        this.finances = [
+            {
+                id: 1,
+                type: "cotisation",
+                amount: 5000,
+                currency: "FCFA",
+                date: "2024-12-01",
+                member: "Jean Martin",
+                description: "Cotisation mensuelle"
+            },
+            {
+                id: 2,
+                type: "dépense",
+                amount: 2500,
+                currency: "FCFA",
+                date: "2024-12-05",
+                member: "Association",
+                description: "Achat de matériel"
+            }
+        ];
+        
+        // Sauvegarder les données initiales
+        this.saveData();
+    }
+    
+    // Méthode pour authentifier un utilisateur
+    authenticate(username, password) {
+        const user = this.users.find(u => u.username === username && u.password === password);
+        if (user) {
+            this.currentUser = { ...user };
+            delete this.currentUser.password; // Ne pas stocker le mot de passe dans la session
+            
+            // Mettre à jour la date de dernière connexion
+            const userIndex = this.users.findIndex(u => u.id === user.id);
+            if (userIndex !== -1) {
+                this.users[userIndex].lastLogin = new Date().toISOString().split('T')[0];
+                this.saveData(); // Sauvegarder les changements
+            }
+            
+            return this.currentUser;
+        }
+        return null;
+    }
+    
+    // Méthode pour déconnecter l'utilisateur
+    logout() {
+        this.currentUser = null;
+    }
+    
+    // Vérifier si un utilisateur est connecté
+    isAuthenticated() {
+        return this.currentUser !== null;
+    }
+    
+    // Obtenir le rôle de l'utilisateur actuel
+    getCurrentUserRole() {
+        return this.currentUser ? this.currentUser.role : null;
+    }
+    
+    // Vérifier si l'utilisateur a une permission spécifique
+    hasPermission(resource, action) {
+        if (!this.isAuthenticated()) return false;
+        
+        const role = this.getCurrentUserRole();
+        const rolePermissions = this.permissions[role];
+        
+        if (!rolePermissions) return false;
+        
+        const resourcePermissions = rolePermissions[resource];
+        return resourcePermissions && resourcePermissions.includes(action);
+    }
+    
+    // Vérifier si l'utilisateur peut gérer d'autres utilisateurs
+    canManageUsers(targetUserRole) {
+        if (!this.isAuthenticated()) return false;
+        
+        const currentRole = this.getCurrentUserRole();
+        
+        // Le super admin peut gérer tout le monde
+        if (currentRole === 'superadmin') return true;
+        
+        // Les admins peuvent gérer les utilisateurs de niveau inférieur
+        if (currentRole === 'administrateur') {
+            return ['trésorier', 'secrétaire', 'membre'].includes(targetUserRole);
+        }
+        
+        // Les autres rôles ne peuvent pas gérer d'utilisateurs
+        return false;
+    }
+    
+    // Méthode pour générer un mot de passe aléatoire sécurisé
+    generateRandomPassword(length = 12) {
+        const lowercase = "abcdefghijklmnopqrstuvwxyz";
+        const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const numbers = "0123456789";
+        const symbols = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+        
+        // S'assurer qu'au moins un caractère de chaque type est inclus
+        let password = "";
+        password += lowercase.charAt(Math.floor(Math.random() * lowercase.length));
+        password += uppercase.charAt(Math.floor(Math.random() * uppercase.length));
+        password += numbers.charAt(Math.floor(Math.random() * numbers.length));
+        password += symbols.charAt(Math.floor(Math.random() * symbols.length));
+        
+        // Compléter le reste du mot de passe
+        const allChars = lowercase + uppercase + numbers + symbols;
+        for (let i = 4; i < length; i++) {
+            password += allChars.charAt(Math.floor(Math.random() * allChars.length));
+        }
+        
+        // Mélanger les caractères
+        return password.split('').sort(() => Math.random() - 0.5).join('');
+    }
+    
+    // Méthodes CRUD pour les utilisateurs
+    getUsers() {
+        if (this.hasPermission('users', 'read')) {
+            return this.users.map(user => {
+                const { password, ...userWithoutPassword } = user;
+                return userWithoutPassword;
+            });
+        }
+        throw new Error("Permission denied: Cannot read users");
+    }
+    
+    addUser(userData) {
+        if (this.hasPermission('users', 'create')) {
+            // Vérifier si le nom d'utilisateur existe déjà
+            if (this.users.some(u => u.username === userData.username)) {
+                throw new Error("Ce nom d'utilisateur existe déjà.");
+            }
+            
+            const newUser = {
+                id: this.nextIds.user++,
+                ...userData
+            };
+            this.users.push(newUser);
+            this.saveData(); // Sauvegarder les changements
+            return newUser;
+        }
+        throw new Error("Permission denied: Cannot create users");
+    }
+    
+    updateUser(userId, userData) {
+        if (this.hasPermission('users', 'write')) {
+            const userIndex = this.users.findIndex(u => u.id === userId);
+            if (userIndex !== -1) {
+                const targetUser = this.users[userIndex];
+                
+                // Vérifier les permissions hiérarchiques
+                if (!this.canManageUsers(targetUser.role)) {
+                    throw new Error("Vous n'avez pas la permission de modifier cet utilisateur.");
+                }
+                
+                // Vérifier si le nom d'utilisateur existe déjà (sauf pour l'utilisateur actuel)
+                if (userData.username && this.users.some(u => u.username === userData.username && u.id !== userId)) {
+                    throw new Error("Ce nom d'utilisateur existe déjà.");
+                }
+                
+                // Mettre à jour uniquement les champs fournis
+                Object.keys(userData).forEach(key => {
+                    if (key !== 'id') { // Ne pas modifier l'ID
+                        this.users[userIndex][key] = userData[key];
+                    }
+                });
+                
+                this.saveData(); // Sauvegarder les changements
+                
+                const updatedUser = { ...this.users[userIndex] };
+                delete updatedUser.password; // Ne pas retourner le mot de passe
+                return updatedUser;
+            }
+            throw new Error("User not found");
+        }
+        throw new Error("Permission denied: Cannot update users");
+    }
+    
+    deleteUser(userId) {
+        if (this.hasPermission('users', 'delete')) {
+            const userIndex = this.users.findIndex(u => u.id === userId);
+            if (userIndex !== -1) {
+                const targetUser = this.users[userIndex];
+                
+                // Vérifier les permissions hiérarchiques
+                if (!this.canManageUsers(targetUser.role)) {
+                    throw new Error("Vous n'avez pas la permission de supprimer cet utilisateur.");
+                }
+                
+                // Empêcher la suppression du super admin par d'autres que lui-même
+                if (targetUser.role === 'superadmin' && this.getCurrentUserRole() !== 'superadmin') {
+                    throw new Error("Seul le super admin peut se supprimer lui-même.");
+                }
+                
+                this.users.splice(userIndex, 1);
+                this.saveData(); // Sauvegarder les changements
+                return true;
+            }
+            throw new Error("User not found");
+        }
+        throw new Error("Permission denied: Cannot delete users");
+    }
+    
+    // Méthodes CRUD pour les membres
+    getMembers() {
+        if (this.hasPermission('members', 'read')) {
+            // Joindre les informations des utilisateurs avec celles des membres
+            return this.members.map(member => {
+                const user = this.users.find(u => u.id === member.userId);
+                return {
+                    ...member,
+                    username: user ? user.username : 'Inconnu',
+                    userRole: user ? user.role : 'Inconnu'
+                };
+            });
+        }
+        throw new Error("Permission denied: Cannot read members");
+    }
+    
+    addMember(memberData) {
+        if (this.hasPermission('members', 'create')) {
+            // Créer un utilisateur associé si nécessaire
+            let userId = memberData.userId;
+            
+            // Si aucun userId n'est fourni, créer un utilisateur
+            if (!userId) {
+                const userData = {
+                    username: memberData.username || memberData.email.split('@')[0],
+                    password: this.generateRandomPassword(),
+                    role: memberData.userRole || "membre",
+                    fullName: memberData.fullName,
+                    email: memberData.email,
+                    phone: memberData.phone || "",
+                    dateInscription: new Date().toISOString().split('T')[0],
+                    lastLogin: "Jamais",
+                    status: "actif",
+                    permissions: {
+                        canExport: false,
+                        canDelete: false,
+                        canModifySettings: false
+                    }
+                };
+                
+                const newUser = this.addUser(userData);
+                userId = newUser.id;
+                
+                // Envoyer le mot de passe à l'utilisateur (dans une vraie application)
+                console.log(`Nouvel utilisateur créé : ${userData.username}, mot de passe : ${userData.password}`);
+            }
+            
+            const newMember = {
+                id: this.nextIds.member++,
+                userId: userId,
+                ...memberData
+            };
+            this.members.push(newMember);
+            this.saveData(); // Sauvegarder les changements
+            return newMember;
+        }
+        throw new Error("Permission denied: Cannot create members");
+    }
+    
+    updateMember(memberId, memberData) {
+        if (this.hasPermission('members', 'write')) {
+            const memberIndex = this.members.findIndex(m => m.id === memberId);
+            if (memberIndex !== -1) {
+                // Mettre à jour les informations du membre
+                Object.keys(memberData).forEach(key => {
+                    if (key !== 'id' && key !== 'userId') {
+                        this.members[memberIndex][key] = memberData[key];
+                    }
+                });
+                
+                // Si les données utilisateur doivent être mises à jour
+                if (memberData.userRole || memberData.email || memberData.phone) {
+                    const userIndex = this.users.findIndex(u => u.id === this.members[memberIndex].userId);
+                    if (userIndex !== -1) {
+                        if (memberData.userRole) this.users[userIndex].role = memberData.userRole;
+                        if (memberData.email) this.users[userIndex].email = memberData.email;
+                        if (memberData.phone) this.users[userIndex].phone = memberData.phone;
+                        this.saveData(); // Sauvegarder les changements
+                    }
+                }
+                
+                this.saveData(); // Sauvegarder les changements
+                return this.members[memberIndex];
+            }
+            throw new Error("Member not found");
+        }
+        throw new Error("Permission denied: Cannot update members");
+    }
+    
+    deleteMember(memberId) {
+        if (this.hasPermission('members', 'delete')) {
+            const memberIndex = this.members.findIndex(m => m.id === memberId);
+            if (memberIndex !== -1) {
+                // Supprimer également l'utilisateur associé
+                const userId = this.members[memberIndex].userId;
+                const userIndex = this.users.findIndex(u => u.id === userId);
+                
+                if (userIndex !== -1) {
+                    // Vérifier les permissions hiérarchiques
+                    const targetUser = this.users[userIndex];
+                    if (this.canManageUsers(targetUser.role)) {
+                        this.users.splice(userIndex, 1);
+                    } else {
+                        throw new Error("Vous n'avez pas la permission de supprimer cet utilisateur associé.");
+                    }
+                }
+                
+                this.members.splice(memberIndex, 1);
+                this.saveData(); // Sauvegarder les changements
+                return true;
+            }
+            throw new Error("Member not found");
+        }
+        throw new Error("Permission denied: Cannot delete members");
+    }
+    
+    // Méthodes CRUD pour les événements
+    getEvents() {
+        if (this.hasPermission('events', 'read')) {
+            return this.events;
+        }
+        throw new Error("Permission denied: Cannot read events");
+    }
+    
+    addEvent(eventData) {
+        if (this.hasPermission('events', 'create')) {
+            const newEvent = {
+                id: this.nextIds.event++,
+                ...eventData
+            };
+            this.events.push(newEvent);
+            this.saveData(); // Sauvegarder les changements
+            return newEvent;
+        }
+        throw new Error("Permission denied: Cannot create events");
+    }
+    
+    updateEvent(eventId, eventData) {
+        if (this.hasPermission('events', 'write')) {
+            const eventIndex = this.events.findIndex(e => e.id === eventId);
+            if (eventIndex !== -1) {
+                this.events[eventIndex] = { ...this.events[eventIndex], ...eventData };
+                this.saveData(); // Sauvegarder les changements
+                return this.events[eventIndex];
+            }
+            throw new Error("Event not found");
+        }
+        throw new Error("Permission denied: Cannot update events");
+    }
+    
+    deleteEvent(eventId) {
+        if (this.hasPermission('events', 'delete')) {
+            const eventIndex = this.events.findIndex(e => e.id === eventId);
+            if (eventIndex !== -1) {
+                this.events.splice(eventIndex, 1);
+                this.saveData(); // Sauvegarder les changements
+                return true;
+            }
+            throw new Error("Event not found");
+        }
+        throw new Error("Permission denied: Cannot delete events");
+    }
+    
+    // Méthodes CRUD pour les rapports
+    getReports() {
+        if (this.hasPermission('reports', 'read')) {
+            return this.reports;
+        }
+        throw new Error("Permission denied: Cannot read reports");
+    }
+    
+    addReport(reportData) {
+        if (this.hasPermission('reports', 'create')) {
+            const newReport = {
+                id: this.nextIds.report++,
+                ...reportData
+            };
+            this.reports.push(newReport);
+            this.saveData(); // Sauvegarder les changements
+            return newReport;
+        }
+        throw new Error("Permission denied: Cannot create reports");
+    }
+    
+    updateReport(reportId, reportData) {
+        if (this.hasPermission('reports', 'write')) {
+            const reportIndex = this.reports.findIndex(r => r.id === reportId);
+            if (reportIndex !== -1) {
+                this.reports[reportIndex] = { ...this.reports[reportIndex], ...reportData };
+                this.saveData(); // Sauvegarder les changements
+                return this.reports[reportIndex];
+            }
+            throw new Error("Report not found");
+        }
+        throw new Error("Permission denied: Cannot update reports");
+    }
+    
+    deleteReport(reportId) {
+        if (this.hasPermission('reports', 'delete')) {
+            const reportIndex = this.reports.findIndex(r => r.id === reportId);
+            if (reportIndex !== -1) {
+                this.reports.splice(reportIndex, 1);
+                this.saveData(); // Sauvegarder les changements
+                return true;
+            }
+            throw new Error("Report not found");
+        }
+        throw new Error("Permission denied: Cannot delete reports");
+    }
+    
+    generateReport(reportId) {
+        if (this.hasPermission('reports', 'generate')) {
+            const report = this.reports.find(r => r.id === reportId);
+            if (report) {
+                report.generatedDate = new Date().toISOString().split('T')[0];
+                report.status = "généré";
+                this.saveData(); // Sauvegarder les changements
+                return report;
+            }
+            throw new Error("Report not found");
+        }
+        throw new Error("Permission denied: Cannot generate reports");
+    }
+    
+    // Méthodes CRUD pour les finances
+    getFinances() {
+        if (this.hasPermission('finances', 'read')) {
+            return this.finances;
+        }
+        throw new Error("Permission denied: Cannot read finances");
+    }
+    
+    addFinance(financeData) {
+        if (this.hasPermission('finances', 'create')) {
+            const newFinance = {
+                id: this.nextIds.finance++,
+                currency: "FCFA",
+                ...financeData
+            };
+            this.finances.push(newFinance);
+            this.saveData(); // Sauvegarder les changements
+            return newFinance;
+        }
+        throw new Error("Permission denied: Cannot create finances");
+    }
+    
+    updateFinance(financeId, financeData) {
+        if (this.hasPermission('finances', 'write')) {
+            const financeIndex = this.finances.findIndex(f => f.id === financeId);
+            if (financeIndex !== -1) {
+                this.finances[financeIndex] = { ...this.finances[financeIndex], ...financeData };
+                this.saveData(); // Sauvegarder les changements
+                return this.finances[financeIndex];
+            }
+            throw new Error("Finance record not found");
+        }
+        throw new Error("Permission denied: Cannot update finances");
+    }
+    
+    deleteFinance(financeId) {
+        if (this.hasPermission('finances', 'delete')) {
+            const financeIndex = this.finances.findIndex(f => f.id === financeId);
+            if (financeIndex !== -1) {
+                this.finances.splice(financeIndex, 1);
+                this.saveData(); // Sauvegarder les changements
+                return true;
+            }
+            throw new Error("Finance record not found");
+        }
+        throw new Error("Permission denied: Cannot delete finances");
+    }
+    
+    // Méthode pour formater les montants en FCFA
+    formatCurrency(amount) {
+        return `${amount.toLocaleString()} FCFA`;
+    }
+    
+    // Méthode pour obtenir les statistiques
+    getStatistics() {
+        return {
+            totalMembers: this.members.length,
+            activeMembers: this.members.filter(m => m.status === 'actif').length,
+            totalEvents: this.events.length,
+            upcomingEvents: this.events.filter(e => new Date(e.date) >= new Date()).length,
+            totalFinances: this.finances.reduce((sum, f) => sum + (f.type === 'cotisation' ? f.amount : -f.amount), 0),
+            totalUsers: this.users.length
+        };
+    }
+    
+    // Méthode pour obtenir les détails de l'utilisateur connecté
+    getCurrentUserDetails() {
+        if (!this.isAuthenticated()) {
+            return null;
+        }
+        
+        // Retourner les détails complets de l'utilisateur connecté
+        const user = this.users.find(u => u.id === this.currentUser.id);
+        if (user) {
+            const { password, ...userWithoutPassword } = user;
+            return userWithoutPassword;
+        }
+        
+        return null;
+    }
+}
+
+// Exporter l'instance de la base de données
+const db = new UNDatabase();
