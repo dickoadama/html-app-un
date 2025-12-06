@@ -99,7 +99,7 @@ class UNDatabase {
             contribution: 5 // Nouvel ID pour les cotisations
         };
         
-        // Chaque membre est aussi un utilisateur
+        // Compte du super administrateur uniquement
         this.users = [
             {
                 id: 1,
@@ -107,8 +107,8 @@ class UNDatabase {
                 password: "superadmin123",
                 role: "superadmin",
                 fullName: "Super Administrateur",
-                email: "superadmin@un-association.fcfa",
-                phone: "+221 11 111 11 11",
+                email: "admin@organization.com",
+                phone: "",
                 dateInscription: "2024-01-01",
                 lastLogin: "2024-12-05",
                 status: "actif",
@@ -116,74 +116,6 @@ class UNDatabase {
                     canExport: true,
                     canDelete: true,
                     canModifySettings: true
-                }
-            },
-            {
-                id: 2,
-                username: "admin",
-                password: "admin123",
-                role: "administrateur",
-                fullName: "Administrateur Principal",
-                email: "admin@un-association.fcfa",
-                phone: "+221 12 345 67 89",
-                dateInscription: "2024-01-15",
-                lastLogin: "2024-12-05",
-                status: "actif",
-                permissions: {
-                    canExport: true,
-                    canDelete: true,
-                    canModifySettings: true
-                }
-            },
-            {
-                id: 3,
-                username: "jean.martin",
-                password: "jean123",
-                role: "trésorier",
-                fullName: "Jean Martin",
-                email: "jean.martin@un-association.fcfa",
-                phone: "+221 98 765 43 21",
-                dateInscription: "2024-01-20",
-                lastLogin: "2024-12-04",
-                status: "actif",
-                permissions: {
-                    canExport: false,
-                    canDelete: false,
-                    canModifySettings: false
-                }
-            },
-            {
-                id: 4,
-                username: "marie.lambert",
-                password: "marie123",
-                role: "secrétaire",
-                fullName: "Marie Lambert",
-                email: "marie.lambert@un-association.fcfa",
-                phone: "+221 45 678 90 12",
-                dateInscription: "2024-01-22",
-                lastLogin: "2024-12-03",
-                status: "actif",
-                permissions: {
-                    canExport: false,
-                    canDelete: false,
-                    canModifySettings: false
-                }
-            },
-            {
-                id: 5,
-                username: "pierre.dubois",
-                password: "pierre123",
-                role: "membre",
-                fullName: "Pierre Dubois",
-                email: "pierre.dubois@un-association.fcfa",
-                phone: "+221 33 444 55 66",
-                dateInscription: "2024-02-01",
-                lastLogin: "2024-12-02",
-                status: "actif",
-                permissions: {
-                    canExport: false,
-                    canDelete: false,
-                    canModifySettings: false
                 }
             }
         ];
@@ -194,45 +126,9 @@ class UNDatabase {
                 id: 1,
                 userId: 1, // Lien vers l'utilisateur Super Admin
                 fullName: "Super Administrateur",
-                email: "superadmin@un-association.fcfa",
+                email: "admin@organization.com",
                 role: "Super Admin",
                 dateAdhesion: "2020-01-01",
-                status: "actif"
-            },
-            {
-                id: 2,
-                userId: 2, // Lien vers l'utilisateur Admin
-                fullName: "Administrateur Principal",
-                email: "admin@un-association.fcfa",
-                role: "Administrateur",
-                dateAdhesion: "2020-01-15",
-                status: "actif"
-            },
-            {
-                id: 3,
-                userId: 3, // Lien vers l'utilisateur Jean Martin
-                fullName: "Jean Martin",
-                email: "jean.martin@un-association.fcfa",
-                role: "Trésorier",
-                dateAdhesion: "2020-06-10",
-                status: "actif"
-            },
-            {
-                id: 4,
-                userId: 4, // Lien vers l'utilisateur Marie Lambert
-                fullName: "Marie Lambert",
-                email: "marie.lambert@un-association.fcfa",
-                role: "Secrétaire",
-                dateAdhesion: "2021-03-22",
-                status: "actif"
-            },
-            {
-                id: 5,
-                userId: 5, // Lien vers l'utilisateur Pierre Dubois
-                fullName: "Pierre Dubois",
-                email: "pierre.dubois@un-association.fcfa",
-                role: "Membre",
-                dateAdhesion: "2020-01-15",
                 status: "actif"
             }
         ];
