@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Gérer la déconnexion
     setupLogout();
+    
+    // Initialiser les gestionnaires d'événements globaux
+    setupGlobalEventHandlers();
 });
 
 // Initialiser l'application
@@ -82,6 +85,281 @@ function setupNavigation() {
     });
 }
 
+// Initialiser les gestionnaires d'événements globaux
+function setupGlobalEventHandlers() {
+    // Gestionnaire d'événements pour les boutons d'édition
+    document.addEventListener('click', function(e) {
+        // Vérifier si le clic est sur un bouton d'édition
+        if (e.target.closest('.btn-icon.edit') || e.target.closest('.btn.edit')) {
+            const editButton = e.target.closest('.btn-icon.edit') || e.target.closest('.btn.edit');
+            handleEditButtonClick(editButton);
+        }
+        
+        // Vérifier si le clic est sur un bouton de suppression
+        if (e.target.closest('.btn-icon.delete') || e.target.closest('.btn.delete')) {
+            const deleteButton = e.target.closest('.btn-icon.delete') || e.target.closest('.btn.delete');
+            handleDeleteButtonClick(deleteButton);
+        }
+    });
+}
+
+// Gérer le clic sur un bouton d'édition
+function handleEditButtonClick(button) {
+    // Identifier le type d'élément à éditer
+    const parentRow = button.closest('tr');
+    const parentCard = button.closest('.event-card, .report-card, .profile-card');
+    
+    if (parentRow) {
+        // Édition dans un tableau
+        const tableName = parentRow.closest('table').id || parentRow.closest('.members-table, .profiles-table, .contributions-table, .users-table')?.className;
+        editTableRow(parentRow, tableName);
+    } else if (parentCard) {
+        // Édition dans une carte
+        const cardType = parentCard.className;
+        editCard(parentCard, cardType);
+    } else {
+        // Édition générique
+        editGenericItem(button);
+    }
+}
+
+// Gérer le clic sur un bouton de suppression
+function handleDeleteButtonClick(button) {
+    // Demander confirmation avant suppression
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.')) {
+        return;
+    }
+    
+    // Identifier le type d'élément à supprimer
+    const parentRow = button.closest('tr');
+    const parentCard = button.closest('.event-card, .report-card, .profile-card');
+    
+    if (parentRow) {
+        // Suppression dans un tableau
+        const tableName = parentRow.closest('table').id || parentRow.closest('.members-table, .profiles-table, .contributions-table, .users-table')?.className;
+        deleteTableRow(parentRow, tableName);
+    } else if (parentCard) {
+        // Suppression dans une carte
+        const cardType = parentCard.className;
+        deleteCard(parentCard, cardType);
+    } else {
+        // Suppression générique
+        deleteGenericItem(button);
+    }
+}
+
+// Éditer une ligne de tableau
+function editTableRow(row, tableName) {
+    console.log('Édition de la ligne du tableau:', tableName);
+    
+    // Extraire les données de la ligne
+    const rowData = extractRowData(row);
+    
+    // Identifier le type d'élément à éditer
+    switch(tableName) {
+        case 'members-table':
+            openEditMemberModal(rowData);
+            break;
+        case 'profiles-table':
+            openEditProfileModal(rowData);
+            break;
+        case 'contributions-table':
+            openEditContributionModal(rowData);
+            break;
+        case 'users-table':
+            openEditUserModal(rowData);
+            break;
+        default:
+            showEditNotification('Édition de l\'élément', rowData);
+    }
+}
+
+// Supprimer une ligne de tableau
+function deleteTableRow(row, tableName) {
+    console.log('Suppression de la ligne du tableau:', tableName);
+    
+    // Animation de suppression
+    row.style.transition = 'opacity 0.3s ease';
+    row.style.opacity = '0';
+    
+    setTimeout(() => {
+        row.remove();
+        showDeleteNotification('Élément supprimé avec succès');
+    }, 300);
+}
+
+// Éditer une carte
+function editCard(card, cardType) {
+    console.log('Édition de la carte:', cardType);
+    
+    // Extraire les données de la carte
+    const cardData = extractCardData(card);
+    
+    // Identifier le type de carte à éditer
+    switch(cardType) {
+        case 'event-card':
+            openEditEventModal(cardData);
+            break;
+        case 'report-card':
+            openEditReportModal(cardData);
+            break;
+        default:
+            showEditNotification('Édition de la carte', cardData);
+    }
+}
+
+// Supprimer une carte
+function deleteCard(card, cardType) {
+    console.log('Suppression de la carte:', cardType);
+    
+    // Animation de suppression
+    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+        card.remove();
+        showDeleteNotification('Élément supprimé avec succès');
+    }, 300);
+}
+
+// Édition générique
+function editGenericItem(button) {
+    console.log('Édition générique');
+    showEditNotification('Édition de l\'élément');
+}
+
+// Suppression générique
+function deleteGenericItem(button) {
+    console.log('Suppression générique');
+    showDeleteNotification('Élément supprimé avec succès');
+}
+
+// Extraire les données d'une ligne de tableau
+function extractRowData(row) {
+    const cells = row.querySelectorAll('td');
+    const data = {};
+    
+    cells.forEach((cell, index) => {
+        // Ignorer la cellule d'actions
+        if (index < cells.length - 1) {
+            const header = row.closest('table').querySelectorAll('th')[index];
+            if (header) {
+                const key = header.textContent.trim().toLowerCase().replace(/\s+/g, '_');
+                data[key] = cell.textContent.trim();
+            }
+        }
+    });
+    
+    return data;
+}
+
+// Extraire les données d'une carte
+function extractCardData(card) {
+    const data = {};
+    
+    // Extraire le titre
+    const titleElement = card.querySelector('h3');
+    if (titleElement) {
+        data.title = titleElement.textContent.trim();
+    }
+    
+    // Extraire les autres informations
+    const infoElements = card.querySelectorAll('[class*="event-"], [class*="report-"]');
+    infoElements.forEach(element => {
+        const className = Array.from(element.classList).find(cls => cls.includes('-'));
+        if (className) {
+            const key = className.replace(/^(event-|report-)/, '');
+            data[key] = element.textContent.trim();
+        }
+    });
+    
+    return data;
+}
+
+// Ouvrir le modal d'édition d'un membre
+function openEditMemberModal(memberData) {
+    alert(`Édition du membre: ${memberData.nom || 'Non spécifié'}\nFonctionnalité à implémenter`);
+}
+
+// Ouvrir le modal d'édition d'un profil
+function openEditProfileModal(profileData) {
+    alert(`Édition du profil: ${profileData.nom || 'Non spécifié'}\nFonctionnalité à implémenter`);
+}
+
+// Ouvrir le modal d'édition d'une cotisation
+function openEditContributionModal(contributionData) {
+    alert(`Édition de la cotisation: ${contributionData.membre || 'Non spécifié'}\nFonctionnalité à implémenter`);
+}
+
+// Ouvrir le modal d'édition d'un utilisateur
+function openEditUserModal(userData) {
+    alert(`Édition de l'utilisateur: ${userData.nom_complet || 'Non spécifié'}\nFonctionnalité à implémenter`);
+}
+
+// Ouvrir le modal d'édition d'un événement
+function openEditEventModal(eventData) {
+    alert(`Édition de l'événement: ${eventData.title || 'Non spécifié'}\nFonctionnalité à implémenter`);
+}
+
+// Ouvrir le modal d'édition d'un rapport
+function openEditReportModal(reportData) {
+    alert(`Édition du rapport: ${reportData.title || 'Non spécifié'}\nFonctionnalité à implémenter`);
+}
+
+// Afficher une notification d'édition
+function showEditNotification(title, data = null) {
+    const message = data ? `${title}\n${JSON.stringify(data, null, 2)}` : title;
+    alert(message);
+}
+
+// Afficher une notification de suppression
+function showDeleteNotification(message) {
+    // Créer un élément de notification
+    const notification = document.createElement('div');
+    notification.className = 'notification success';
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        z-index: 1000;
+        animation: slideInRight 0.3s ease;
+    `;
+    
+    // Ajouter l'animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Ajouter la notification au document
+    document.body.appendChild(notification);
+    
+    // Supprimer la notification après 3 secondes
+    setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
 // Gérer les membres
 function setupMembers() {
     // Bouton pour ajouter un membre
@@ -130,6 +408,37 @@ function setupReports() {
 function setupAdministration() {
     // Exemple de gestion de l'administration
     console.log('Gestion de l\'administration initialisée');
+    
+    // Gérer les onglets d'administration
+    setupAdminTabs();
+}
+
+// Gérer les onglets d'administration
+function setupAdminTabs() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            switchToTab(tabName);
+        });
+    });
+}
+
+// Basculer vers un onglet d'administration
+function switchToTab(tabName) {
+    // Masquer tous les onglets
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Désactiver tous les boutons
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Activer l'onglet sélectionné
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+    document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add('active');
 }
 
 // Gérer les cotisations avec incrémentation automatique
