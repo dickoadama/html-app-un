@@ -175,13 +175,14 @@
             <section id="events" class="page">
                 <h2>ÉVÉNEMENTS</h2>
                 <div class="events-actions">
-                    <button class="btn btn-primary" id="addEventBtn">Ajouter un événement</button>
+                    <button class="btn btn-primary" id="addEventBtn"><i class="fas fa-plus"></i> Ajouter un événement</button>
                     <div class="search-box">
                         <input type="text" id="searchEvents" placeholder="Rechercher un événement...">
+                        <i class="fas fa-search"></i>
                     </div>
                 </div>
                 
-                <div class="events-grid">
+                <div class="events-grid" id="eventsContainer">
                     <div class="event-card">
                         <h3>Assemblée générale annuelle</h3>
                         <div class="event-date"><i class="far fa-calendar-alt"></i> 15 décembre 2024</div>
@@ -628,40 +629,48 @@
             </div>
 
             <!-- Modal pour ajouter/modifier un événement -->
-            <div class="modal" id="eventModal">
+            <div id="eventModal" class="modal">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 id="eventModalTitle">Ajouter un événement</h3>
-                        <span class="close">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <form id="eventForm">
+                    <span class="close">&times;</span>
+                    <h2 id="eventModalTitle">Ajouter un événement</h2>
+                    <form id="eventForm">
+                        <input type="hidden" id="eventId">
+                        <div class="form-group">
+                            <label for="eventTitle">Titre de l'événement:</label>
+                            <input type="text" id="eventTitle" required>
+                        </div>
+                        <div class="form-row">
                             <div class="form-group">
-                                <label for="eventTitle">Titre</label>
-                                <input type="text" id="eventTitle" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="eventDate">Date</label>
+                                <label for="eventDate">Date:</label>
                                 <input type="date" id="eventDate" required>
                             </div>
                             <div class="form-group">
-                                <label for="eventTime">Heure</label>
-                                <input type="time" id="eventTime" required>
+                                <label for="eventTime">Heure:</label>
+                                <input type="time" id="eventTime">
                             </div>
-                            <div class="form-group">
-                                <label for="eventLocation">Lieu</label>
-                                <input type="text" id="eventLocation" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="eventDescription">Description</label>
-                                <textarea id="eventDescription" rows="4" required></textarea>
-                            </div>
-                            <div class="form-actions">
-                                <button type="button" class="btn btn-secondary" id="cancelEvent">Retour</button>
-                                <button type="submit" class="btn btn-primary">Valider</button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventLocation">Lieu:</label>
+                            <input type="text" id="eventLocation" placeholder="Ex: Salle des fêtes, 123 Rue de la Paix">
+                        </div>
+                        <div class="form-group">
+                            <label for="eventDescription">Description:</label>
+                            <textarea id="eventDescription" rows="4" placeholder="Décrivez l'événement en détail..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventStatus">Statut:</label>
+                            <select id="eventStatus">
+                                <option value="programmé">Programmé</option>
+                                <option value="en_cours">En cours</option>
+                                <option value="terminé">Terminé</option>
+                                <option value="annulé">Annulé</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelEventBtn">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

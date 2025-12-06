@@ -299,7 +299,20 @@ function openEditUserModal(userData) {
 
 // Ouvrir le modal d'édition d'un événement
 function openEditEventModal(eventData) {
-    alert(`Édition de l'événement: ${eventData.title || 'Non spécifié'}\nFonctionnalité à implémenter`);
+    // Remplir le formulaire avec les données de l'événement
+    document.getElementById('eventId').value = eventData.id || '';
+    document.getElementById('eventTitle').value = eventData.title || '';
+    document.getElementById('eventDate').value = eventData.date || '';
+    document.getElementById('eventTime').value = eventData.time || '';
+    document.getElementById('eventLocation').value = eventData.location || '';
+    document.getElementById('eventDescription').value = eventData.description || '';
+    document.getElementById('eventStatus').value = eventData.status || 'programmé';
+    
+    // Changer le titre du modal
+    document.getElementById('eventModalTitle').textContent = 'Modifier un événement';
+    
+    // Afficher le modal
+    document.getElementById('eventModal').style.display = 'block';
 }
 
 // Ouvrir le modal d'édition d'un rapport
@@ -385,7 +398,7 @@ function setupEvents() {
     const addEventBtn = document.getElementById('addEventBtn');
     if (addEventBtn) {
         addEventBtn.addEventListener('click', function() {
-            alert('Fonctionnalité d\'ajout d\'événement - À implémenter');
+            openAddEventModal();
         });
     }
     
@@ -396,6 +409,145 @@ function setupEvents() {
             console.log('Recherche d\'événements:', this.value);
         });
     }
+    
+    // Gérer le formulaire d'événement
+    const eventForm = document.getElementById('eventForm');
+    if (eventForm) {
+        eventForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveEvent();
+        });
+    }
+    
+    // Bouton d'annulation
+    const cancelEventBtn = document.getElementById('cancelEventBtn');
+    if (cancelEventBtn) {
+        cancelEventBtn.addEventListener('click', function() {
+            closeEventModal();
+        });
+    }
+    
+    // Bouton de fermeture du modal
+    const closeModalBtn = document.querySelector('#eventModal .close');
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function() {
+            closeEventModal();
+        });
+    }
+    
+    // Fermer le modal en cliquant en dehors
+    const eventModal = document.getElementById('eventModal');
+    if (eventModal) {
+        eventModal.addEventListener('click', function(e) {
+            if (e.target === eventModal) {
+                closeEventModal();
+            }
+        });
+    }
+}
+
+// Ouvrir le modal d'ajout d'événement
+function openAddEventModal() {
+    // Réinitialiser le formulaire
+    document.getElementById('eventForm').reset();
+    document.getElementById('eventId').value = '';
+    
+    // Changer le titre du modal
+    document.getElementById('eventModalTitle').textContent = 'Ajouter un événement';
+    
+    // Afficher le modal
+    document.getElementById('eventModal').style.display = 'block';
+}
+
+// Fermer le modal d'événement
+function closeEventModal() {
+    document.getElementById('eventModal').style.display = 'none';
+}
+
+// Sauvegarder un événement
+function saveEvent() {
+    // Récupérer les données du formulaire
+    const eventId = document.getElementById('eventId').value;
+    const eventTitle = document.getElementById('eventTitle').value;
+    const eventDate = document.getElementById('eventDate').value;
+    const eventTime = document.getElementById('eventTime').value;
+    const eventLocation = document.getElementById('eventLocation').value;
+    const eventDescription = document.getElementById('eventDescription').value;
+    const eventStatus = document.getElementById('eventStatus').value;
+    
+    // Valider les données
+    if (!eventTitle || !eventDate) {
+        alert('Veuillez remplir tous les champs obligatoires.');
+        return;
+    }
+    
+    // Créer l'objet événement
+    const eventData = {
+        id: eventId || Date.now(), // Utiliser timestamp si nouvel événement
+        title: eventTitle,
+        date: eventDate,
+        time: eventTime,
+        location: eventLocation,
+        description: eventDescription,
+        status: eventStatus
+    };
+    
+    if (eventId) {
+        // Modification d'un événement existant
+        updateEvent(eventData);
+    } else {
+        // Ajout d'un nouvel événement
+        addNewEvent(eventData);
+    }
+    
+    // Fermer le modal
+    closeEventModal();
+    
+    // Afficher un message de succès
+    alert('Événement enregistré avec succès!');
+}
+
+// Ajouter un nouvel événement
+function addNewEvent(eventData) {
+    // Créer la carte de l'événement
+    const eventCard = document.createElement('div');
+    eventCard.className = 'event-card';
+    
+    // Formater la date pour l'affichage
+    const formattedDate = formatDateForDisplay(eventData.date);
+    
+    eventCard.innerHTML = `
+        <h3>${eventData.title}</h3>
+        <div class="event-date"><i class="far fa-calendar-alt"></i> ${formattedDate}</div>
+        ${eventData.location ? `<div class="event-location"><i class="fas fa-map-marker-alt"></i> ${eventData.location}</div>` : ''}
+        ${eventData.description ? `<div class="event-description">${eventData.description}</div>` : ''}
+        <div class="event-actions">
+            <button class="btn btn-secondary edit"><i class="fas fa-edit"></i> Modifier</button>
+            <button class="btn btn-danger delete"><i class="fas fa-trash"></i> Supprimer</button>
+        </div>
+    `;
+    
+    // Ajouter la carte au début du conteneur
+    const eventsContainer = document.getElementById('eventsContainer');
+    eventsContainer.insertBefore(eventCard, eventsContainer.firstChild);
+    
+    console.log('Nouvel événement ajouté:', eventData);
+}
+
+// Mettre à jour un événement existant
+function updateEvent(eventData) {
+    // Dans une vraie application, cela mettrait à jour l'événement dans la base de données
+    console.log('Événement mis à jour:', eventData);
+    alert('Événement mis à jour avec succès!');
+}
+
+// Formater la date pour l'affichage
+function formatDateForDisplay(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
 }
 
 // Gérer les rapports
