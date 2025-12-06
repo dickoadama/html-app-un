@@ -1,5 +1,7 @@
 // Script principal pour l'application UN
+// Gère la navigation, les interactions utilisateur et l'initialisation de l'application
 
+// Attendre que le DOM soit complètement chargé
 document.addEventListener('DOMContentLoaded', function() {
     // Initialiser l'application
     initializeApp();
@@ -7,20 +9,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gérer la navigation
     setupNavigation();
     
-    // Gérer les formulaires
-    setupForms();
+    // Gérer les membres
+    setupMembers();
     
-    // Gérer les modals
-    setupModals();
+    // Gérer les événements
+    setupEvents();
     
-    // Gérer les onglets d'administration
-    setupAdminTabs();
+    // Gérer les rapports
+    setupReports();
     
-    // Gérer les événements de dropdown
-    setupDropdowns();
+    // Gérer l'administration
+    setupAdministration();
     
-    // Mettre à jour les statistiques
-    updateStats();
+    // Gérer les cotisations
+    setupContributions();
+    
+    // Gérer la déconnexion
+    setupLogout();
 });
 
 // Initialiser l'application
@@ -28,29 +33,20 @@ function initializeApp() {
     // Vérifier si l'utilisateur est connecté
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) {
+        // Rediriger vers la page de connexion si aucun utilisateur n'est connecté
         window.location.href = 'login.html';
         return;
     }
     
-    // Mettre à jour l'affichage avec les informations de l'utilisateur
-    document.getElementById('userName').textContent = currentUser.fullName || currentUser.username;
+    // Afficher le nom de l'utilisateur
+    document.getElementById('userName').textContent = currentUser.fullName;
     
-    // Afficher un message spécial pour les administrateurs
-    if (currentUser.role === 'administrateur' || currentUser.role === 'superadmin') {
-        document.getElementById('adminMessage').style.display = 'block';
-    }
-    
-    // Gérer la déconnexion
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-        // Déconnecter l'utilisateur
-        db.logout();
-        localStorage.removeItem('currentUser');
-        window.location.href = 'login.html';
-    });
+    // Mettre à jour les statistiques du tableau de bord
+    updateDashboardStats();
 }
 
-// Mettre à jour les statistiques
-function updateStats() {
+// Mettre à jour les statistiques du tableau de bord
+function updateDashboardStats() {
     // Ces valeurs seraient normalement récupérées depuis la base de données
     document.getElementById('totalMembers').textContent = '128';
     document.getElementById('activeMembers').textContent = '115';
@@ -60,295 +56,211 @@ function updateStats() {
     document.getElementById('totalUsers').textContent = '5';
 }
 
-// Gérer la navigation
+// Gérer la navigation entre les différentes sections
 function setupNavigation() {
-    // Navigation principale
-    const navLinks = document.querySelectorAll('.nav-link[data-page]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            const page = this.getAttribute('data-page');
-            showPage(page);
             
-            // Mettre à jour la classe active
-            navLinks.forEach(l => l.classList.remove('active'));
+            // Retirer la classe active de tous les liens
+            navLinks.forEach(navLink => navLink.classList.remove('active'));
+            
+            // Ajouter la classe active au lien cliqué
             this.classList.add('active');
-        });
-    });
-    
-    // Navigation des dropdowns
-    const dropdownLinks = document.querySelectorAll('.dropdown-menu a[data-page]');
-    dropdownLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const page = this.getAttribute('data-page');
-            const subpage = this.getAttribute('data-subpage');
-            showPage(page, subpage);
             
-            // Mettre à jour la classe active
-            navLinks.forEach(l => l.classList.remove('active'));
-            document.querySelector(`.nav-link[data-page="${page}"]`).classList.add('active');
-        });
-    });
-    
-    // Redirection vers la page de profil lorsque l'utilisateur clique sur son nom
-    document.getElementById('userInfo').addEventListener('click', function() {
-        window.location.href = 'profile.html';
-    });
-}
-
-// Afficher une page spécifique
-function showPage(pageId, subpageId = null) {
-    // Masquer toutes les pages
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-    });
-    
-    // Afficher la page demandée
-    const page = document.getElementById(pageId);
-    if (page) {
-        page.classList.add('active');
-        
-        // Si c'est la page d'administration, afficher l'onglet par défaut
-        if (pageId === 'administration') {
-            showTab('users');
-        }
-    }
-    
-    // Gérer les sous-pages si nécessaire
-    if (subpageId) {
-        // Logique spécifique pour les sous-pages
-        console.log(`Affichage de la sous-page: ${subpageId}`);
-    }
-}
-
-// Gérer les onglets d'administration
-function setupAdminTabs() {
-    const tabButtons = document.querySelectorAll('.tab-button');
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-            showTab(tabId);
+            // Masquer toutes les pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
             
-            // Mettre à jour la classe active
-            tabButtons.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
+            // Afficher la page correspondante
+            const pageId = this.getAttribute('data-page');
+            document.getElementById(pageId).classList.add('active');
         });
     });
 }
 
-// Afficher un onglet spécifique
-function showTab(tabId) {
-    // Masquer tous les onglets
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
+// Gérer les membres
+function setupMembers() {
+    // Bouton pour ajouter un membre
+    const addMemberBtn = document.getElementById('addMemberBtn');
+    if (addMemberBtn) {
+        addMemberBtn.addEventListener('click', function() {
+            alert('Fonctionnalité d\'ajout de membre - À implémenter');
+        });
+    }
     
-    // Afficher l'onglet demandé
-    const tab = document.getElementById(`${tabId}-tab`);
-    if (tab) {
-        tab.classList.add('active');
+    // Recherche de membres
+    const searchMembersInput = document.getElementById('searchMembers');
+    if (searchMembersInput) {
+        searchMembersInput.addEventListener('input', function() {
+            console.log('Recherche de membres:', this.value);
+        });
     }
 }
 
-// Gérer les événements de dropdown (menus déroulants supprimés)
-function setupDropdowns() {
-    // Les menus déroulants ont été supprimés, donc cette fonction est désactivée
-    console.log('Les menus déroulants ont été supprimés');
+// Gérer les événements
+function setupEvents() {
+    // Bouton pour ajouter un événement
+    const addEventBtn = document.getElementById('addEventBtn');
+    if (addEventBtn) {
+        addEventBtn.addEventListener('click', function() {
+            alert('Fonctionnalité d\'ajout d\'événement - À implémenter');
+        });
+    }
+    
+    // Recherche d'événements
+    const searchEventsInput = document.getElementById('searchEvents');
+    if (searchEventsInput) {
+        searchEventsInput.addEventListener('input', function() {
+            console.log('Recherche d\'événements:', this.value);
+        });
+    }
 }
 
-// Gérer les formulaires
-function setupForms() {
-    // Formulaire de membre
-    const memberForm = document.getElementById('memberForm');
-    if (memberForm) {
-        memberForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Logique de traitement du formulaire de membre
-            alert('Formulaire de membre soumis avec succès!');
-            closeModal('memberModal');
+// Gérer les rapports
+function setupReports() {
+    // Exemple de gestion des rapports
+    console.log('Gestion des rapports initialisée');
+}
+
+// Gérer l'administration
+function setupAdministration() {
+    // Exemple de gestion de l'administration
+    console.log('Gestion de l\'administration initialisée');
+}
+
+// Gérer les cotisations
+function setupContributions() {
+    // Bouton pour ajouter une cotisation
+    const addContributionBtn = document.getElementById('addContributionBtn');
+    if (addContributionBtn) {
+        addContributionBtn.addEventListener('click', function() {
+            openContributionModal();
         });
     }
     
-    // Formulaire d'événement
-    const eventForm = document.getElementById('eventForm');
-    if (eventForm) {
-        eventForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Logique de traitement du formulaire d'événement
-            alert('Formulaire d\'événement soumis avec succès!');
-            closeModal('eventModal');
+    // Recherche de cotisations
+    const searchContributionsInput = document.getElementById('searchContributions');
+    if (searchContributionsInput) {
+        searchContributionsInput.addEventListener('input', function() {
+            console.log('Recherche de cotisations:', this.value);
         });
     }
     
-    // Formulaire d'utilisateur
-    const userForm = document.getElementById('userForm');
-    if (userForm) {
-        userForm.addEventListener('submit', function(e) {
+    // Gérer le formulaire de cotisation
+    const contributionForm = document.getElementById('contributionForm');
+    if (contributionForm) {
+        contributionForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Logique de traitement du formulaire d'utilisateur
-            alert('Formulaire d\'utilisateur soumis avec succès!');
-            closeModal('userModal');
+            saveContribution();
         });
     }
     
-    // Formulaire de profil
-    const profileForm = document.getElementById('profileForm');
-    if (profileForm) {
-        profileForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Logique de traitement du formulaire de profil
-            alert('Formulaire de profil soumis avec succès!');
-            closeModal('profileModal');
+    // Bouton d'annulation
+    const cancelContributionBtn = document.getElementById('cancelContributionBtn');
+    if (cancelContributionBtn) {
+        cancelContributionBtn.addEventListener('click', function() {
+            closeContributionModal();
         });
     }
     
-    // Formulaire de paramètres
-    const settingsForm = document.getElementById('settingsForm');
-    if (settingsForm) {
-        settingsForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Logique de traitement du formulaire de paramètres
-            alert('Paramètres sauvegardés avec succès!');
+    // Bouton de fermeture du modal
+    const closeModalBtn = document.querySelector('#contributionModal .close');
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function() {
+            closeContributionModal();
         });
     }
     
-    // Formulaire de rapport
-    const reportForm = document.getElementById('reportForm');
-    if (reportForm) {
-        reportForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Logique de traitement du formulaire de rapport
-            alert('Rapport généré avec succès!');
-            closeModal('reportModal');
-        });
-    }
-    
-    // Bouton de génération de mot de passe
-    const generatePasswordBtn = document.getElementById('generatePassword');
-    if (generatePasswordBtn) {
-        generatePasswordBtn.addEventListener('click', function() {
-            const passwordField = document.getElementById('password');
-            if (passwordField) {
-                passwordField.value = generateSecurePassword();
+    // Fermer le modal en cliquant en dehors
+    const contributionModal = document.getElementById('contributionModal');
+    if (contributionModal) {
+        contributionModal.addEventListener('click', function(e) {
+            if (e.target === contributionModal) {
+                closeContributionModal();
             }
         });
     }
 }
 
-// Générer un mot de passe sécurisé
-function generateSecurePassword(length = 12) {
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
-    let password = "";
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * charset.length);
-        password += charset[randomIndex];
+// Ouvrir le modal de cotisation
+function openContributionModal(contributionId = null) {
+    const modal = document.getElementById('contributionModal');
+    const modalTitle = document.getElementById('modalTitle');
+    
+    if (contributionId) {
+        // Mode édition
+        modalTitle.textContent = 'Modifier une cotisation';
+        // Pré-remplir le formulaire avec les données de la cotisation
+        // À implémenter
+    } else {
+        // Mode création
+        modalTitle.textContent = 'Ajouter une cotisation';
+        // Réinitialiser le formulaire
+        document.getElementById('contributionForm').reset();
     }
-    return password;
+    
+    modal.style.display = 'block';
 }
 
-// Gérer les modals
-function setupModals() {
-    // Boutons pour ouvrir les modals
-    document.getElementById('addMemberBtn')?.addEventListener('click', () => openModal('memberModal', 'Ajouter un membre'));
-    document.getElementById('addEventBtn')?.addEventListener('click', () => openModal('eventModal', 'Ajouter un événement'));
-    document.getElementById('addUserBtn')?.addEventListener('click', () => openModal('userModal', 'Ajouter un utilisateur'));
-    document.getElementById('addProfileBtn')?.addEventListener('click', () => openModal('profileModal', 'Ajouter un profil'));
-    document.getElementById('generateReportBtn')?.addEventListener('click', () => openModal('reportModal'));
+// Fermer le modal de cotisation
+function closeContributionModal() {
+    const modal = document.getElementById('contributionModal');
+    modal.style.display = 'none';
+}
+
+// Sauvegarder une cotisation
+function saveContribution() {
+    // Récupérer les données du formulaire
+    const memberSelect = document.getElementById('memberSelect');
+    const contributionAmount = document.getElementById('contributionAmount');
+    const contributionDate = document.getElementById('contributionDate');
+    const contributionType = document.getElementById('contributionType');
+    const contributionDescription = document.getElementById('contributionDescription');
+    const contributionStatus = document.getElementById('contributionStatus');
     
-    // Boutons de fermeture des modals
-    const closeButtons = document.querySelectorAll('.close');
-    closeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const modal = this.closest('.modal');
-            if (modal) {
-                closeModal(modal.id);
-            }
+    // Valider les données
+    if (!memberSelect.value || !contributionAmount.value || !contributionDate.value || 
+        !contributionType.value || !contributionStatus.value) {
+        alert('Veuillez remplir tous les champs obligatoires.');
+        return;
+    }
+    
+    // Créer l'objet cotisation
+    const contributionData = {
+        memberId: parseInt(memberSelect.value),
+        memberName: memberSelect.options[memberSelect.selectedIndex].text,
+        amount: parseFloat(contributionAmount.value),
+        currency: "FCFA",
+        date: contributionDate.value,
+        type: contributionType.value,
+        description: contributionDescription.value,
+        status: contributionStatus.value
+    };
+    
+    // Sauvegarder la cotisation (simulation)
+    console.log('Cotisation sauvegardée:', contributionData);
+    
+    // Fermer le modal
+    closeContributionModal();
+    
+    // Afficher un message de succès
+    alert('Cotisation enregistrée avec succès!');
+}
+
+// Gérer la déconnexion
+function setupLogout() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            // Supprimer l'utilisateur courant du localStorage
+            localStorage.removeItem('currentUser');
+            
+            // Rediriger vers la page de connexion
+            window.location.href = 'login.html';
         });
-    });
-    
-    // Fermer le modal quand on clique en dehors
-    window.addEventListener('click', function(e) {
-        if (e.target.classList.contains('modal')) {
-            closeModal(e.target.id);
-        }
-    });
-    
-    // Boutons "Retour" dans les formulaires
-    document.getElementById('cancelMember')?.addEventListener('click', () => closeModal('memberModal'));
-    document.getElementById('cancelEvent')?.addEventListener('click', () => closeModal('eventModal'));
-    document.getElementById('cancelUser')?.addEventListener('click', () => closeModal('userModal'));
-    document.getElementById('cancelProfile')?.addEventListener('click', () => closeModal('profileModal'));
-    document.getElementById('cancelSettings')?.addEventListener('click', () => showTab('users'));
-    document.getElementById('cancelReport')?.addEventListener('click', () => closeModal('reportModal'));
-}
-
-// Ouvrir un modal
-function openModal(modalId, title = null) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        // Mettre à jour le titre si fourni
-        if (title) {
-            const titleElement = modal.querySelector('h3');
-            if (titleElement) {
-                titleElement.textContent = title;
-            }
-        }
-        
-        // Réinitialiser les formulaires
-        const form = modal.querySelector('form');
-        if (form) {
-            form.reset();
-        }
-        
-        // Afficher le modal avec animation
-        modal.style.display = 'block';
-        modal.classList.add('show');
-        
-        // Empêcher le scroll du body
-        document.body.style.overflow = 'hidden';
     }
 }
-
-// Fermer un modal
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.remove('show');
-        
-        // Attendre la fin de l'animation avant de cacher le modal
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 300);
-        
-        // Réactiver le scroll du body
-        document.body.style.overflow = '';
-    }
-}
-
-// Fonctions utilitaires pour les tableaux
-function setupTableActions() {
-    // Gérer les boutons d'édition et de suppression dans les tableaux
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.btn-icon.edit')) {
-            const row = e.target.closest('tr');
-            if (row) {
-                // Logique d'édition
-                console.log('Édition de la ligne:', row);
-                alert('Fonction d\'édition à implémenter');
-            }
-        }
-        
-        if (e.target.closest('.btn-icon.delete')) {
-            const row = e.target.closest('tr');
-            if (row && confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
-                // Logique de suppression
-                row.remove();
-                alert('Élément supprimé avec succès');
-            }
-        }
-    });
-}
-
-// Initialiser les actions de tableau
-setupTableActions();
