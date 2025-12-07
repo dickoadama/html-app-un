@@ -137,6 +137,9 @@ function showPage(pageName) {
         
         // Mettre à jour les options de rôle dans le formulaire utilisateur
         updateUserRoleOptions();
+        
+        // Mettre à jour le tableau des utilisateurs
+        updateUsersTable();
     }
 }
 
@@ -277,6 +280,18 @@ function setupEventListeners() {
         }
     });
     
+    // Gérer le bouton d'ajout d'utilisateur
+    document.getElementById('addUserBtn')?.addEventListener('click', function() {
+        // Réinitialiser le formulaire
+        const userForm = document.getElementById('userForm');
+        if (userForm) {
+            userForm.reset();
+        }
+        
+        // Ouvrir le modal avec le titre approprié
+        openModal('userModal', 'Ajouter un utilisateur');
+    });
+    
     // Gérer le bouton de génération de mot de passe
     document.getElementById('generatePassword')?.addEventListener('click', function() {
         generateRandomPassword();
@@ -326,9 +341,59 @@ function setupForms() {
     if (userForm) {
         userForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Logique de traitement du formulaire d'utilisateur
-            showNotification('Utilisateur ajouté avec succès!', 'success');
-            closeModal('userModal');
+            
+            // Récupérer les valeurs du formulaire
+            const fullName = document.getElementById('fullName').value;
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const role = document.getElementById('role').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Vérifier que les mots de passe correspondent
+            if (password !== confirmPassword) {
+                showNotification('Les mots de passe ne correspondent pas.', 'error');
+                return;
+            }
+            
+            // Préparer les données de l'utilisateur
+            const userData = {
+                username: username,
+                password: password,
+                role: role,
+                fullName: fullName,
+                email: email,
+                phone: phone,
+                dateInscription: new Date().toISOString().split('T')[0],
+                lastLogin: "Jamais",
+                status: "actif",
+                permissions: {
+                    canExport: false,
+                    canDelete: false,
+                    canModifySettings: false
+                }
+            };
+            
+            try {
+                // Ajouter l'utilisateur via la base de données
+                const newUser = db.addUser(userData);
+                
+                // Mettre à jour l'affichage
+                updateUsersTable();
+                
+                // Afficher un message de succès
+                showNotification('Utilisateur ajouté avec succès!', 'success');
+                
+                // Fermer le modal
+                closeModal('userModal');
+                
+                // Réinitialiser le formulaire
+                userForm.reset();
+            } catch (error) {
+                console.error('Erreur lors de l\'ajout de l\'utilisateur:', error);
+                showNotification(error.message || 'Erreur lors de l\'ajout de l\'utilisateur.', 'error');
+            }
         });
     }
     
@@ -363,6 +428,69 @@ function setupForms() {
             // Logique de traitement du formulaire de paramètres
             showNotification('Paramètres enregistrés avec succès!', 'success');
         });
+    }
+}
+
+// Mettre à jour le tableau des utilisateurs
+function updateUsersTable() {
+    try {
+        // Obtenir les utilisateurs depuis la base de données
+        const users = db.getUsers();
+        
+        // Obtenir l'élément du tableau
+        const usersTableBody = document.getElementById('usersTableBody');
+        
+        if (usersTableBody) {
+            // Vider le tableau
+            usersTableBody.innerHTML = '';
+            
+            // Ajouter chaque utilisateur au tableau
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                
+                // Convertir le rôle pour l'affichage
+                let displayRole = user.role;
+                switch (user.role) {
+                    case 'superadmin':
+                        displayRole = 'Super Admin';
+                        break;
+                    case 'administrateur':
+                        displayRole = 'Administrateur';
+                        break;
+                    case 'trésorier':
+                        displayRole = 'Trésorier';
+                        break;
+                    case 'secrétaire':
+                        displayRole = 'Secrétaire';
+                        break;
+                    case 'membre':
+                        displayRole = 'Membre';
+                        break;
+                }
+                
+                // Convertir le statut pour l'affichage
+                let statusClass = user.status === 'actif' ? 'active' : 'inactive';
+                let statusText = user.status === 'actif' ? 'Actif' : 'Inactif';
+                
+                row.innerHTML = `
+                    <td>${user.fullName || 'N/A'}</td>
+                    <td>${user.username}</td>
+                    <td>${displayRole}</td>
+                    <td>${user.email || 'N/A'}</td>
+                    <td>${user.lastLogin || 'Jamais'}</td>
+                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
+                        <button class="btn-icon delete${user.role === 'superadmin' ? ' disabled' : ''}"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                
+                usersTableBody.appendChild(row);
+            });
+        }
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du tableau des utilisateurs:', error);
+        showNotification('Erreur lors de la mise à jour de la liste des utilisateurs.', 'error');
     }
 }
 
