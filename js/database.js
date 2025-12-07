@@ -973,3 +973,6 @@ class Database {
         this.saveData();
     }
 }
+
+// Créer une instance de la base de données
+const db = new Database();
