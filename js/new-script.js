@@ -134,6 +134,9 @@ function showPage(pageName) {
         if (firstTab) {
             firstTab.style.display = 'block';
         }
+        
+        // Mettre à jour les options de rôle dans le formulaire utilisateur
+        updateUserRoleOptions();
     }
 }
 
@@ -170,6 +173,39 @@ function showTab(tabName) {
     const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
     if (activeBtn) {
         activeBtn.classList.add('active');
+    }
+}
+
+// Mettre à jour les options de rôle dans le formulaire utilisateur
+function updateUserRoleOptions() {
+    const roleSelect = document.getElementById('role');
+    if (!roleSelect) return;
+    
+    // Obtenir le rôle de l'utilisateur connecté
+    const currentUserRole = db.getCurrentUserRole();
+    
+    // Effacer les options existantes
+    roleSelect.innerHTML = '<option value="">Sélectionner un rôle</option>';
+    
+    // Ajouter les options en fonction du rôle de l'utilisateur connecté
+    if (currentUserRole === 'superadmin') {
+        // Le super admin peut créer tous les types d'utilisateurs
+        roleSelect.innerHTML += `
+            <option value="administrateur">Administrateur</option>
+            <option value="trésorier">Trésorier</option>
+            <option value="secrétaire">Secrétaire</option>
+            <option value="membre">Membre</option>
+        `;
+    } else if (currentUserRole === 'administrateur') {
+        // L'administrateur peut créer des utilisateurs de niveau inférieur
+        roleSelect.innerHTML += `
+            <option value="trésorier">Trésorier</option>
+            <option value="secrétaire">Secrétaire</option>
+            <option value="membre">Membre</option>
+        `;
+    } else {
+        // Les autres utilisateurs ne peuvent pas créer d'utilisateurs
+        roleSelect.innerHTML += '<option value="" disabled>Aucun rôle disponible</option>';
     }
 }
 
@@ -239,6 +275,11 @@ function setupEventListeners() {
                 showNotification('Erreur lors de la réinitialisation des données.', 'error');
             }
         }
+    });
+    
+    // Gérer le bouton de génération de mot de passe
+    document.getElementById('generatePassword')?.addEventListener('click', function() {
+        generateRandomPassword();
     });
     
     // Gérer les formulaires
@@ -391,7 +432,7 @@ function simulateReportDownload(reportName) {
     // Simuler un délai de téléchargement
     setTimeout(() => {
         hideLoading();
-        showNotification(`Rapport ${reportName} téléchargé avec succès!`, 'success');
+        showNotification(`Rapport "${reportName}" téléchargé avec succès!`, 'success');
     }, 2000);
 }
 
