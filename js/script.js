@@ -220,9 +220,16 @@ function setupForms() {
         reportForm.addEventListener('submit', function(e) {
             e.preventDefault();
             // Logique de traitement du formulaire de rapport
+            const reportType = document.getElementById('reportType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            // Générer un nom de rapport basé sur le type et les dates
+            const reportName = `rapport_${reportType}_${startDate}_to_${endDate}`;
+            
             alert('Rapport généré avec succès!');
             // Simuler le téléchargement du rapport
-            simulateReportDownload();
+            simulateReportDownload(reportName);
             closeModal('reportModal');
         });
     }
@@ -251,15 +258,15 @@ function generateSecurePassword(length = 12) {
 }
 
 // Simuler le téléchargement d'un rapport
-function simulateReportDownload() {
+function simulateReportDownload(reportName = 'rapport') {
     // Créer un élément de lien temporaire
     const link = document.createElement('a');
-    link.href = '#';
-    link.download = 'rapport.pdf';
+    link.href = 'data:text/plain;charset=utf-8,Rapport généré';
+    link.download = `${reportName}.pdf`;
     link.click();
     
     // Afficher un message de confirmation
-    alert('Le rapport a été téléchargé avec succès!');
+    alert(`Le rapport ${reportName} a été téléchargé avec succès!`);
 }
 
 // Gérer les modals
@@ -355,12 +362,48 @@ function setupTableActions() {
         
         // Gérer les boutons de téléchargement dans les rapports
         if (e.target.closest('.btn.download')) {
-            const row = e.target.closest('.report-card');
-            if (row) {
-                // Logique de téléchargement
-                alert('Téléchargement du rapport...');
-                // Vous pouvez ajouter ici la logique pour télécharger le rapport
-                // correspondant à la carte sélectionnée
+            const card = e.target.closest('.report-card');
+            if (card) {
+                // Obtenir le nom du rapport à partir du titre
+                const reportTitle = card.querySelector('h3').textContent;
+                // Simuler le téléchargement du rapport
+                simulateReportDownload(reportTitle.replace(/\s+/g, '_'));
+            }
+        }
+        
+        // Gérer les boutons de visualisation dans les rapports
+        if (e.target.closest('.btn.view') || e.target.closest('.btn.btn-secondary .fa-eye')) {
+            const card = e.target.closest('.report-card');
+            if (card) {
+                // Obtenir le nom du rapport à partir du titre
+                const reportTitle = card.querySelector('h3').textContent;
+                alert(`Visualisation du rapport: ${reportTitle}`);
+                // Dans une implémentation réelle, vous ouvririez un modal avec le contenu du rapport
+            }
+        }
+        
+        // Gérer les boutons d'édition dans les événements
+        if (e.target.closest('.btn.edit') || e.target.closest('.btn.btn-secondary .fa-edit')) {
+            const card = e.target.closest('.event-card');
+            if (card) {
+                // Obtenir le nom de l'événement à partir du titre
+                const eventName = card.querySelector('h3').textContent;
+                alert(`Édition de l'événement: ${eventName}`);
+                // Dans une implémentation réelle, vous ouvririez un modal d'édition
+            }
+        }
+        
+        // Gérer les boutons de suppression dans les événements
+        if (e.target.closest('.btn.delete') || e.target.closest('.btn.btn-danger .fa-trash')) {
+            const card = e.target.closest('.event-card');
+            if (card) {
+                // Obtenir le nom de l'événement à partir du titre
+                const eventName = card.querySelector('h3').textContent;
+                if (confirm(`Êtes-vous sûr de vouloir supprimer l'événement: ${eventName} ?`)) {
+                    // Logique de suppression
+                    card.remove();
+                    alert(`Événement ${eventName} supprimé avec succès`);
+                }
             }
         }
     });
