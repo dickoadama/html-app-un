@@ -1,89 +1,84 @@
-# Système de Gestion d'Association - Application UN
+# UN - Gestion d'Association
 
-## Description
-Cette application permet de gérer une association avec plusieurs fonctionnalités incluant la gestion des membres, des cotisations, des événements, des rapports et des utilisateurs avec différents niveaux de permissions.
+Application de gestion d'association complète avec système de gestion hiérarchique des utilisateurs.
 
 ## Fonctionnalités
 
-### 1. Authentification
-- Seuls les utilisateurs authentifiés peuvent accéder à l'application
-- Différents niveaux d'accès selon les rôles
-- Page de connexion avec comptes de démonstration
+- **Gestion des utilisateurs avec hiérarchie** :
+  - SUPER ADMIN peut créer des ADMINISTRATEURS
+  - ADMINISTRATEURS peuvent créer des TRÉSORIERS, SECRÉTAIRES et MEMBRES
+- **Tableau de bord** avec statistiques en temps réel
+- **Gestion des membres** de l'association
+- **Suivi des cotisations** et finances
+- **Gestion des événements** et activités
+- **Génération de rapports** personnalisés
+- **Interface responsive** et moderne
 
-### 2. Tableau de Bord
-- Vue d'ensemble des statistiques de l'association
-- Activité récente
-- Indicateurs clés (membres, événements, finances)
+## Structure hiérarchique des rôles
 
-### 3. Gestion des Membres
-- Ajout, modification et suppression de membres
-- Recherche et filtrage des membres
-- Association avec des comptes utilisateurs
+1. **Super Administrateur** (superadmin)
+   - Peut tout gérer dans l'application
+   - Peut créer des administrateurs
 
-### 4. Gestion des Cotisations
-- Suivi des cotisations des membres
-- Historique des paiements
-- Génération de rapports financiers
+2. **Administrateur** (administrateur)
+   - Peut gérer les utilisateurs de niveau inférieur
+   - Peut créer des trésoriers, secrétaires et membres
 
-### 5. Gestion des Événements
-- Création et organisation d'événements
-- Calendrier des événements à venir
-- Gestion des participants
+3. **Trésorier** (trésorier)
+   - Gère les aspects financiers
+   - Suit les cotisations
 
-### 6. Gestion des Rapports
-- Génération de rapports personnalisés
-- Téléchargement et visualisation des rapports
-- Historique des rapports générés
+4. **Secrétaire** (secrétaire)
+   - Gère les membres et événements
+   - Maintient les archives
 
-### 7. Administration
-- Gestion des utilisateurs avec différents rôles
-- Configuration des paramètres de l'application
-- Gestion des profils
+5. **Membre** (membre)
+   - Accès en lecture aux informations pertinentes
+   - Peut voir ses propres données
 
-### 8. Fonctionnalités Flottantes
-- Horloge en temps réel
-- Bouton "Retour" en haut de page
-- Blog d'informations flottant
+## Technologies utilisées
 
-## Rôles Disponibles
-1. **Super Administrateur** : Accès complet à toutes les fonctionnalités
-2. **Administrateur** : Gestion des utilisateurs et paramètres
-3. **Trésorier** : Gestion des finances et des rapports
-4. **Secrétaire** : Gestion des membres et des événements
-5. **Membre** : Accès en lecture seule aux informations de base
+- HTML5, CSS3, JavaScript (Vanilla)
+- LocalStorage pour la persistance des données
+- Font Awesome pour les icônes
+- Design responsive
+
+## Installation
+
+1. Clonez le dépôt :
+   ```bash
+   git clone https://github.com/dickoadama/html-app-un.git
+   ```
+
+2. Ouvrez le fichier `index.html` dans votre navigateur
 
 ## Utilisation
 
-### Accès à l'Application
-1. Ouvrez le fichier `login.html` dans votre navigateur
-2. Connectez-vous avec un compte de démonstration
+1. Connectez-vous avec les identifiants par défaut :
+   - Super Administrateur : `superadmin` / `superadmin123`
+   - Administrateur : `admin` / `admin123`
+   - Trésorier : `tresorier` / `tresorier123`
+   - Secrétaire : `secretaire` / `secretaire123`
+   - Membre : `pierre.dubois` / `pierre123`
 
-### Comptes de Démonstration
-- **Super Administrateur** - Nom d'utilisateur: `superadmin`, Mot de passe: `superadmin123`
-- **Administrateur** - Nom d'utilisateur: `admin`, Mot de passe: `admin123`
-- **Trésorier** - Nom d'utilisateur: `jean.martin`, Mot de passe: `jean123`
-- **Secrétaire** - Nom d'utilisateur: `marie.lambert`, Mot de passe: `marie123`
-- **Membre** - Nom d'utilisateur: `pierre.dubois`, Mot de passe: `pierre123`
+2. Naviguez dans l'application via le menu principal
 
-## Sécurité
-- Les mots de passe sont stockés en clair dans cette version de démonstration
-- Dans une application de production, les mots de passe devraient être hashés
-- L'administrateur principal ne peut pas être supprimé
-- Les noms d'utilisateur doivent être uniques
-- Contrôle d'accès basé sur les rôles
+## Déploiement
 
-## Technologies Utilisées
-- HTML5
-- CSS3
-- JavaScript (ES6+)
-- Font Awesome (icônes)
-- Stockage local du navigateur (LocalStorage)
+L'application est déployée automatiquement sur GitHub Pages via la branche `gh-pages`.
 
-## Structure des Fichiers
-- `index.html` : Point d'entrée de l'application (redirige vers app.html)
-- `app.html` : Interface principale de l'application
-- `login.html` : Page d'authentification
-- `css/new-style.css` : Styles principaux de l'application
-- `js/new-script.js` : Logique principale de l'application
-- `js/database.js` : Simulateur de base de données avec gestion des rôles et permissions
-- `js/auth.js` : Gestion de l'authentification et des sessions
+## Contribuer
+
+1. Forkez le projet
+2. Créez une branche pour votre fonctionnalité (`git checkout -b feature/AmazingFeature`)
+3. Commitez vos changements (`git commit -m 'Add some AmazingFeature'`)
+4. Poussez vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrez une Pull Request
+
+## Licence
+
+Ce projet est sous licence MIT - voir le fichier [LICENSE.md](LICENSE) pour plus d'informations.
+
+## Contact
+
+Pour toute question ou suggestion, veuillez ouvrir une issue sur GitHub.
