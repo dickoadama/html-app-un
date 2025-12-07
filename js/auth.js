@@ -39,8 +39,17 @@ function checkAuthentication() {
     
     // Si l'utilisateur est connecté, mettre à jour l'affichage
     if (currentUser && (currentPage === 'index.html' || currentPage === 'profile.html')) {
-        const user = JSON.parse(currentUser);
-        updateUIWithUserInfo(user);
+        try {
+            const user = JSON.parse(currentUser);
+            updateUIWithUserInfo(user);
+        } catch (e) {
+            console.error('Erreur lors de la lecture des informations utilisateur:', e);
+            // En cas d'erreur de parsing, déconnecter l'utilisateur
+            localStorage.removeItem('currentUser');
+            if (currentPage !== 'login.html') {
+                window.location.href = 'login.html';
+            }
+        }
     }
     
     // Si on est sur la page de connexion, vérifier si l'utilisateur est un super admin pour afficher les credentials
@@ -84,16 +93,21 @@ function handleLogin() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     
-    // Authentifier l'utilisateur
-    const user = db.authenticate(username, password);
-    
-    if (user) {
-        // Connexion réussie
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        window.location.href = 'index.html';
-    } else {
-        // Échec de la connexion
-        showError('Nom d\'utilisateur ou mot de passe incorrect.');
+    try {
+        // Authentifier l'utilisateur
+        const user = db.authenticate(username, password);
+        
+        if (user) {
+            // Connexion réussie
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            window.location.href = 'index.html';
+        } else {
+            // Échec de la connexion
+            showError('Nom d\'utilisateur ou mot de passe incorrect.');
+        }
+    } catch (error) {
+        console.error('Erreur lors de la connexion:', error);
+        showError('Une erreur s\'est produite lors de la connexion. Veuillez réessayer.');
     }
 }
 

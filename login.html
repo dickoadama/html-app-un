@@ -42,8 +42,8 @@
                     <ul>
                         <li><strong>Super Administrateur</strong> - Nom d'utilisateur: <code>superadmin</code>, Mot de passe: <code>superadmin123</code></li>
                         <li><strong>Administrateur</strong> - Nom d'utilisateur: <code>admin</code>, Mot de passe: <code>admin123</code></li>
-                        <li><strong>Trésorier</strong> - Nom d'utilisateur: <code>jean.martin</code>, Mot de passe: <code>jean123</code></li>
-                        <li><strong>Secrétaire</strong> - Nom d'utilisateur: <code>marie.lambert</code>, Mot de passe: <code>marie123</code></li>
+                        <li><strong>Trésorier</strong> - Nom d'utilisateur: <code>tresorier</code>, Mot de passe: <code>tresorier123</code></li>
+                        <li><strong>Secrétaire</strong> - Nom d'utilisateur: <code>secretaire</code>, Mot de passe: <code>secretaire123</code></li>
                         <li><strong>Membre</strong> - Nom d'utilisateur: <code>pierre.dubois</code>, Mot de passe: <code>pierre123</code></li>
                     </ul>
                 </div>
@@ -56,65 +56,5 @@
 
     <script src="js/database.js"></script>
     <script src="js/auth.js"></script>
-    <script>
-        // Vérifier si l'utilisateur est déjà connecté en tant que super admin
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = localStorage.getItem('currentUser');
-            if (currentUser) {
-                try {
-                    const user = JSON.parse(currentUser);
-                    // Afficher les informations de connexion uniquement pour le super admin
-                    if (user.role === 'superadmin') {
-                        document.getElementById('credentialsSection').style.display = 'block';
-                        document.getElementById('accessMessage').innerHTML = '<strong>Accès Super Administrateur:</strong> Vous avez accès aux informations de connexion de tous les comptes.';
-                    }
-                } catch (e) {
-                    console.error('Erreur lors de la lecture des informations utilisateur:', e);
-                }
-            }
-            
-            // Gérer la soumission du formulaire
-            const loginForm = document.getElementById('loginForm');
-            if (loginForm) {
-                loginForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const username = document.getElementById('username').value;
-                    const password = document.getElementById('password').value;
-                    
-                    try {
-                        // Tenter d'authentifier l'utilisateur
-                        const user = db.authenticate(username, password);
-                        
-                        if (user) {
-                            // Stocker l'utilisateur dans le localStorage
-                            localStorage.setItem('currentUser', JSON.stringify(user));
-                            
-                            // Rediriger vers la page principale
-                            window.location.href = 'index.html';
-                        } else {
-                            // Afficher un message d'erreur
-                            document.getElementById('errorMessage').textContent = 'Nom d\'utilisateur ou mot de passe incorrect.';
-                            document.getElementById('errorMessage').style.display = 'block';
-                            
-                            // Masquer l'erreur après 5 secondes
-                            setTimeout(() => {
-                                document.getElementById('errorMessage').style.display = 'none';
-                            }, 5000);
-                        }
-                    } catch (error) {
-                        console.error('Erreur lors de la connexion:', error);
-                        document.getElementById('errorMessage').textContent = 'Une erreur s\'est produite lors de la connexion.';
-                        document.getElementById('errorMessage').style.display = 'block';
-                        
-                        // Masquer l'erreur après 5 secondes
-                        setTimeout(() => {
-                            document.getElementById('errorMessage').style.display = 'none';
-                        }, 5000);
-                    }
-                });
-            }
-        });
-    </script>
 </body>
 </html>
