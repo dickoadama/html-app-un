@@ -97,6 +97,7 @@ function showTab(tabId) {
 function setupEventListeners() {
     // Boutons d'ouverture de modals
     document.getElementById('addMemberBtn')?.addEventListener('click', () => openModal('memberModal', 'Ajouter un membre'));
+    document.getElementById('addContributionBtn')?.addEventListener('click', () => openModal('contributionModal', 'Enregistrer une cotisation'));
     document.getElementById('addEventBtn')?.addEventListener('click', () => openModal('eventModal', 'Ajouter un événement'));
     document.getElementById('addUserBtn')?.addEventListener('click', () => openModal('userModal', 'Ajouter un utilisateur'));
     document.getElementById('addProfileBtn')?.addEventListener('click', () => openModal('profileModal', 'Ajouter un profil'));
@@ -122,6 +123,7 @@ function setupEventListeners() {
     
     // Boutons "Retour" dans les formulaires
     document.getElementById('cancelMember')?.addEventListener('click', () => closeModal('memberModal'));
+    document.getElementById('cancelContribution')?.addEventListener('click', () => closeModal('contributionModal'));
     document.getElementById('cancelEvent')?.addEventListener('click', () => closeModal('eventModal'));
     document.getElementById('cancelUser')?.addEventListener('click', () => closeModal('userModal'));
     document.getElementById('cancelProfile')?.addEventListener('click', () => closeModal('profileModal'));
@@ -157,6 +159,17 @@ function setupForms() {
             // Logique de traitement du formulaire de membre
             showNotification('Membre ajouté avec succès!', 'success');
             closeModal('memberModal');
+        });
+    }
+    
+    // Formulaire de cotisation
+    const contributionForm = document.getElementById('contributionForm');
+    if (contributionForm) {
+        contributionForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Logique de traitement du formulaire de cotisation
+            showNotification('Cotisation enregistrée avec succès!', 'success');
+            closeModal('contributionModal');
         });
     }
     

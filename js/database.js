@@ -282,7 +282,8 @@ class UNDatabase {
                 currency: "FCFA",
                 date: "2024-12-01",
                 member: "Jean Martin",
-                description: "Cotisation mensuelle"
+                description: "Cotisation mensuelle",
+                status: "payé"
             },
             {
                 id: 2,
@@ -291,7 +292,8 @@ class UNDatabase {
                 currency: "FCFA",
                 date: "2024-12-05",
                 member: "Association",
-                description: "Achat de matériel"
+                description: "Achat de matériel",
+                status: "payé"
             }
         ];
         
@@ -713,6 +715,7 @@ class UNDatabase {
             const newFinance = {
                 id: this.nextIds.finance++,
                 currency: "FCFA",
+                status: "payé",
                 ...financeData
             };
             this.finances.push(newFinance);
