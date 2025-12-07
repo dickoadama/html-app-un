@@ -42,6 +42,41 @@ function checkAuthentication() {
         const user = JSON.parse(currentUser);
         updateUIWithUserInfo(user);
     }
+    
+    // Si on est sur la page de connexion, vérifier si l'utilisateur est un super admin pour afficher les credentials
+    if (currentPage === 'login.html') {
+        updateLoginHelpSection(currentUser);
+    }
+}
+
+// Mettre à jour la section d'aide de connexion
+function updateLoginHelpSection(currentUser) {
+    const loginHelpSection = document.getElementById('loginHelpSection');
+    const credentialsSection = document.getElementById('credentialsSection');
+    const accessMessage = document.getElementById('accessMessage');
+    
+    if (loginHelpSection && credentialsSection && accessMessage) {
+        if (currentUser) {
+            try {
+                const user = JSON.parse(currentUser);
+                // Afficher les informations de connexion uniquement pour le super admin
+                if (user.role === 'superadmin') {
+                    credentialsSection.style.display = 'block';
+                    accessMessage.innerHTML = '<strong>Accès Super Administrateur:</strong> Vous avez accès aux informations de connexion de tous les comptes.';
+                } else {
+                    credentialsSection.style.display = 'none';
+                    accessMessage.innerHTML = 'Les informations de connexion sont uniquement visibles par le Super Administrateur.';
+                }
+            } catch (e) {
+                console.error('Erreur lors de la lecture des informations utilisateur:', e);
+                credentialsSection.style.display = 'none';
+                accessMessage.innerHTML = 'Les informations de connexion sont uniquement visibles par le Super Administrateur.';
+            }
+        } else {
+            credentialsSection.style.display = 'none';
+            accessMessage.innerHTML = 'Les informations de connexion sont uniquement visibles par le Super Administrateur.';
+        }
+    }
 }
 
 // Gérer la connexion
