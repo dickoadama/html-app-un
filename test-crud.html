@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CRUD - Modification et Suppression</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/new-style.css">
+</head>
+<body>
+    <div class="container" style="padding: 50px;">
+        <h1>Test des Fonctions de Modification et Suppression</h1>
+        <p>Cette page permet de tester les fonctionnalités de modification et de suppression.</p>
+        
+        <!-- Test pour les membres -->
+        <div style="margin-bottom: 30px;">
+            <h2>Test des Membres</h2>
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Pierre Dubois</td>
+                        <td>pierre.dubois@example.com</td>
+                        <td>
+                            <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Marie Lambert</td>
+                        <td>marie.lambert@example.com</td>
+                        <td>
+                            <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Test pour les événements -->
+        <div style="margin-bottom: 30px;">
+            <h2>Test des Événements</h2>
+            <div class="events-grid">
+                <div class="event-card">
+                    <div class="event-header">
+                        <h3>Assemblée générale</h3>
+                    </div>
+                    <div class="event-actions">
+                        <button class="btn btn-secondary edit"><i class="fas fa-edit"></i> Modifier</button>
+                        <button class="btn btn-danger delete"><i class="fas fa-trash"></i> Supprimer</button>
+                    </div>
+                </div>
+                <div class="event-card">
+                    <div class="event-header">
+                        <h3>Nettoyage urbain</h3>
+                    </div>
+                    <div class="event-actions">
+                        <button class="btn btn-secondary edit"><i class="fas fa-edit"></i> Modifier</button>
+                        <button class="btn btn-danger delete"><i class="fas fa-trash"></i> Supprimer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Résultats des tests -->
+        <div id="testResults" style="margin-top: 30px; padding: 15px; border-radius: 5px; background-color: #f8f9fa;">
+            <h3>Résultats des Tests :</h3>
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <script src="js/new-script.js"></script>
+    <script>
+        // Attendre que le DOM soit chargé
+        document.addEventListener('DOMContentLoaded', function() {
+            const resultsDiv = document.getElementById('resultsContent');
+            
+            // Fonction pour ajouter un résultat de test
+            function addTestResult(message, isSuccess) {
+                const resultElement = document.createElement('p');
+                resultElement.innerHTML = `
+                    <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-times-circle'}" 
+                       style="color: ${isSuccess ? '#28a745' : '#dc3545'};"></i>
+                    ${message}
+                `;
+                resultsDiv.appendChild(resultElement);
+            }
+            
+            // Simuler un clic sur un bouton d'édition de membre
+            setTimeout(() => {
+                const editMemberBtn = document.querySelector('.members-table .btn-icon.edit');
+                if (editMemberBtn) {
+                    editMemberBtn.click();
+                    addTestResult('Clic sur bouton d\'édition de membre : OK', true);
+                } else {
+                    addTestResult('Clic sur bouton d\'édition de membre : ÉCHEC', false);
+                }
+            }, 1000);
+            
+            // Simuler un clic sur un bouton de suppression de membre
+            setTimeout(() => {
+                const deleteMemberBtn = document.querySelector('.members-table .btn-icon.delete');
+                if (deleteMemberBtn) {
+                    // Remplacer la fonction confirm par une version qui retourne toujours true pour le test
+                    const originalConfirm = window.confirm;
+                    window.confirm = function() { return true; };
+                    
+                    deleteMemberBtn.click();
+                    
+                    // Restaurer la fonction confirm originale
+                    window.confirm = originalConfirm;
+                    
+                    addTestResult('Clic sur bouton de suppression de membre : OK', true);
+                } else {
+                    addTestResult('Clic sur bouton de suppression de membre : ÉCHEC', false);
+                }
+            }, 2000);
+            
+            // Simuler un clic sur un bouton d'édition d'événement
+            setTimeout(() => {
+                const editEventBtn = document.querySelector('.event-card .edit');
+                if (editEventBtn) {
+                    editEventBtn.click();
+                    addTestResult('Clic sur bouton d\'édition d\'événement : OK', true);
+                } else {
+                    addTestResult('Clic sur bouton d\'édition d\'événement : ÉCHEC', false);
+                }
+            }, 3000);
+            
+            // Simuler un clic sur un bouton de suppression d'événement
+            setTimeout(() => {
+                const deleteEventBtn = document.querySelector('.event-card .delete');
+                if (deleteEventBtn) {
+                    // Remplacer la fonction confirm par une version qui retourne toujours true pour le test
+                    const originalConfirm = window.confirm;
+                    window.confirm = function() { return true; };
+                    
+                    deleteEventBtn.click();
+                    
+                    // Restaurer la fonction confirm originale
+                    window.confirm = originalConfirm;
+                    
+                    addTestResult('Clic sur bouton de suppression d\'événement : OK', true);
+                } else {
+                    addTestResult('Clic sur bouton de suppression d\'événement : ÉCHEC', false);
+                }
+            }, 4000);
+        });
+    </script>
+</body>
+</html>

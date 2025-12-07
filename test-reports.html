@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test des Rapports - Téléchargement et Visualisation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/new-style.css">
+</head>
+<body>
+    <div class="container" style="padding: 50px;">
+        <h1>Test des Fonctions de Téléchargement et Visualisation</h1>
+        <p>Cette page permet de tester les fonctionnalités de téléchargement et de visualisation des rapports.</p>
+        
+        <!-- Test pour les rapports -->
+        <div style="margin-bottom: 30px;">
+            <h2>Test des Rapports</h2>
+            <div class="reports-grid">
+                <div class="report-card">
+                    <h3>Rapport Mensuel - Novembre 2024</h3>
+                    <div class="report-meta">
+                        <span class="report-type bg-blue">Financier</span>
+                        <span class="report-date">15/11/2024</span>
+                    </div>
+                    <div class="report-status">Généré le 15/11/2024</div>
+                    <div class="report-actions">
+                        <button class="btn btn-secondary download"><i class="fas fa-download"></i> Télécharger</button>
+                        <button class="btn btn-secondary view"><i class="fas fa-eye"></i> Voir</button>
+                    </div>
+                </div>
+                <div class="report-card">
+                    <h3>Rapport d'Activité - Octobre 2024</h3>
+                    <div class="report-meta">
+                        <span class="report-type bg-green">Activité</span>
+                        <span class="report-date">10/10/2024</span>
+                    </div>
+                    <div class="report-status">Généré le 10/10/2024</div>
+                    <div class="report-actions">
+                        <button class="btn btn-secondary download"><i class="fas fa-download"></i> Télécharger</button>
+                        <button class="btn btn-secondary view"><i class="fas fa-eye"></i> Voir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Résultats des tests -->
+        <div id="testResults" style="margin-top: 30px; padding: 15px; border-radius: 5px; background-color: #f8f9fa;">
+            <h3>Résultats des Tests :</h3>
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <!-- Overlay de chargement -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Chargement en cours...</p>
+        </div>
+    </div>
+    
+    <!-- Conteneur de notifications -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <script src="js/new-script.js"></script>
+    <script>
+        // Attendre que le DOM soit chargé
+        document.addEventListener('DOMContentLoaded', function() {
+            const resultsDiv = document.getElementById('resultsContent');
+            
+            // Fonction pour ajouter un résultat de test
+            function addTestResult(message, isSuccess) {
+                const resultElement = document.createElement('p');
+                resultElement.innerHTML = `
+                    <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-times-circle'}" 
+                       style="color: ${isSuccess ? '#28a745' : '#dc3545'};"></i>
+                    ${message}
+                `;
+                resultsDiv.appendChild(resultElement);
+            }
+            
+            // Simuler un clic sur un bouton de téléchargement
+            setTimeout(() => {
+                const downloadBtn = document.querySelector('.report-card .download');
+                if (downloadBtn) {
+                    downloadBtn.click();
+                    addTestResult('Clic sur bouton de téléchargement : OK', true);
+                } else {
+                    addTestResult('Clic sur bouton de téléchargement : ÉCHEC', false);
+                }
+            }, 1000);
+            
+            // Simuler un clic sur un bouton de visualisation
+            setTimeout(() => {
+                const viewBtn = document.querySelector('.report-card .view');
+                if (viewBtn) {
+                    viewBtn.click();
+                    addTestResult('Clic sur bouton de visualisation : OK', true);
+                } else {
+                    addTestResult('Clic sur bouton de visualisation : ÉCHEC', false);
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

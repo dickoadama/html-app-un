@@ -51,13 +51,24 @@ function initializeApp() {
 
 // Mettre à jour les statistiques
 function updateStats() {
-    // Ces valeurs seraient normalement récupérées depuis la base de données
-    document.getElementById('totalMembers').textContent = '128';
-    document.getElementById('activeMembers').textContent = '115';
-    document.getElementById('totalEvents').textContent = '24';
-    document.getElementById('upcomingEvents').textContent = '8';
-    document.getElementById('totalFinances').textContent = '5.240 FCFA';
-    document.getElementById('totalUsers').textContent = '5';
+    // Récupérer les statistiques depuis la base de données
+    if (typeof db !== 'undefined' && db.getStatistics) {
+        const stats = db.getStatistics();
+        document.getElementById('totalMembers').textContent = stats.totalMembers;
+        document.getElementById('activeMembers').textContent = stats.activeMembers;
+        document.getElementById('totalEvents').textContent = stats.totalEvents;
+        document.getElementById('upcomingEvents').textContent = stats.upcomingEvents;
+        document.getElementById('totalFinances').textContent = stats.totalFinances.toLocaleString() + ' FCFA';
+        document.getElementById('totalUsers').textContent = stats.totalUsers;
+    } else {
+        // Valeurs par défaut si la base de données n'est pas disponible
+        document.getElementById('totalMembers').textContent = '0';
+        document.getElementById('activeMembers').textContent = '0';
+        document.getElementById('totalEvents').textContent = '0';
+        document.getElementById('upcomingEvents').textContent = '0';
+        document.getElementById('totalFinances').textContent = '0 FCFA';
+        document.getElementById('totalUsers').textContent = '0';
+    }
 }
 
 // Gérer la navigation

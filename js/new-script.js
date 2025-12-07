@@ -6,6 +6,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialiser l'application
 function initializeApp() {
+    // Mettre à jour le nom de l'utilisateur connecté
+    updateUserInfo();
+    
+    // Initialiser l'horloge
+    initClock();
+    
     setupNavigation();
     setupEventListeners();
     setupTabs();
@@ -15,15 +21,57 @@ function initializeApp() {
     showPage('dashboard');
 }
 
+// Mettre à jour les informations de l'utilisateur
+function updateUserInfo() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser) {
+        const userNameElement = document.getElementById('userName');
+        if (userNameElement) {
+            userNameElement.textContent = currentUser.fullName || currentUser.username;
+        }
+    }
+}
+
+// Initialiser l'horloge
+function initClock() {
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const timeString = `${hours}:${minutes}:${seconds}`;
+        
+        const clockElement = document.getElementById('clockTime');
+        if (clockElement) {
+            clockElement.textContent = timeString;
+        }
+    }
+    
+    // Mettre à jour l'horloge immédiatement et toutes les secondes
+    updateClock();
+    setInterval(updateClock, 1000);
+}
+
 // Mettre à jour les statistiques
 function updateStats() {
-    // Ces valeurs seraient normalement récupérées depuis la base de données
-    document.getElementById('totalMembers').textContent = '128';
-    document.getElementById('activeMembers').textContent = '115';
-    document.getElementById('totalEvents').textContent = '24';
-    document.getElementById('upcomingEvents').textContent = '8';
-    document.getElementById('totalFinances').textContent = '5.240 FCFA';
-    document.getElementById('totalUsers').textContent = '5';
+    // Récupérer les statistiques depuis la base de données
+    if (typeof db !== 'undefined' && db.getStatistics) {
+        const stats = db.getStatistics();
+        document.getElementById('totalMembers').textContent = stats.totalMembers;
+        document.getElementById('activeMembers').textContent = stats.activeMembers;
+        document.getElementById('totalEvents').textContent = stats.totalEvents;
+        document.getElementById('upcomingEvents').textContent = stats.upcomingEvents;
+        document.getElementById('totalFinances').textContent = stats.totalFinances.toLocaleString() + ' FCFA';
+        document.getElementById('totalUsers').textContent = stats.totalUsers;
+    } else {
+        // Valeurs par défaut si la base de données n'est pas disponible
+        document.getElementById('totalMembers').textContent = '0';
+        document.getElementById('activeMembers').textContent = '0';
+        document.getElementById('totalEvents').textContent = '0';
+        document.getElementById('upcomingEvents').textContent = '0';
+        document.getElementById('totalFinances').textContent = '0 FCFA';
+        document.getElementById('totalUsers').textContent = '0';
+    }
 }
 
 // Gérer la navigation
@@ -143,6 +191,41 @@ function setupEventListeners() {
     // Gérer le bouton de support flottant
     document.getElementById('supportButton')?.addEventListener('click', function() {
         showNotification('Service client\n\nPour toute assistance, veuillez contacter:\nEmail: support@un-association.fcfa\nTéléphone: +221 12 345 67 89', 'info');
+    });
+    
+    // Gérer le bouton retour flottant
+    document.getElementById('backToTopBtn')?.addEventListener('click', function() {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+    
+    // Gérer le blog flottant
+    document.getElementById('blogToggleBtn')?.addEventListener('click', function() {
+        const blogContent = document.getElementById('blogContent');
+        if (blogContent) {
+            if (blogContent.style.display === 'none') {
+                blogContent.style.display = 'block';
+            } else {
+                blogContent.style.display = 'none';
+            }
+        }
+    });
+    
+    // Gérer la fermeture du blog
+    document.getElementById('closeBlog')?.addEventListener('click', function() {
+        const blogContent = document.getElementById('blogContent');
+        if (blogContent) {
+            blogContent.style.display = 'none';
+        }
+    });
+    
+    // Fermer le blog quand on clique en dehors
+    document.addEventListener('click', function(e) {
+        const blogContainer = document.getElementById('floatingBlog');
+        const blogContent = document.getElementById('blogContent');
+        
+        if (blogContainer && blogContent && !blogContainer.contains(e.target) && blogContent.style.display === 'block') {
+            blogContent.style.display = 'none';
+        }
     });
     
     // Gérer les formulaires
@@ -362,53 +445,223 @@ function showNotification(message, type = 'info') {
 
 // Gérer les boutons d'action dans les cartes
 document.addEventListener('click', function(e) {
-    // Gérer les boutons d'édition
-    if (e.target.closest('.btn-icon.edit')) {
-        const card = e.target.closest('.event-card, .report-card, .profile-card');
-        if (card) {
-            // Obtenir le nom de l'élément à partir du titre
-            const titleElement = card.querySelector('h3');
-            const itemName = titleElement ? titleElement.textContent : 'élément';
-            showNotification(`Modification de ${itemName} en cours...`, 'info');
+    // Gérer les boutons d'édition pour les membres (boutons avec class .btn-icon.edit)
+    if (e.target.closest('.btn-icon.edit') && e.target.closest('#membersTableBody')) {
+        const row = e.target.closest('tr');
+        if (row) {
+            // Obtenir les données du membre à partir de la ligne du tableau
+            const cells = row.querySelectorAll('td');
+            const memberName = cells[0].textContent;
+            showNotification(`Modification du membre ${memberName} en cours...`, 'info');
+            // TODO: Implémenter la logique de modification du membre
         }
     }
     
-    // Gérer les boutons de suppression
-    if (e.target.closest('.btn-icon.delete')) {
-        const card = e.target.closest('.event-card, .report-card, .profile-card');
+    // Gérer les boutons de suppression pour les membres (boutons avec class .btn-icon.delete)
+    if (e.target.closest('.btn-icon.delete') && e.target.closest('#membersTableBody')) {
+        const row = e.target.closest('tr');
+        if (row) {
+            // Obtenir les données du membre à partir de la ligne du tableau
+            const cells = row.querySelectorAll('td');
+            const memberName = cells[0].textContent;
+            
+            // Confirmer la suppression
+            if (confirm(`Êtes-vous sûr de vouloir supprimer le membre ${memberName} ?`)) {
+                try {
+                    // Supprimer la ligne du tableau
+                    row.remove();
+                    showNotification(`Membre ${memberName} supprimé avec succès!`, 'success');
+                } catch (error) {
+                    console.error('Erreur lors de la suppression du membre:', error);
+                    showNotification(`Erreur lors de la suppression du membre ${memberName}`, 'error');
+                }
+            }
+        }
+    }
+    
+    // Gérer les boutons d'édition pour les cotisations (boutons avec class .btn-icon.edit)
+    if (e.target.closest('.btn-icon.edit') && e.target.closest('#contributionsTableBody')) {
+        const row = e.target.closest('tr');
+        if (row) {
+            // Obtenir les données de la cotisation à partir de la ligne du tableau
+            const cells = row.querySelectorAll('td');
+            const memberName = cells[0].textContent;
+            showNotification(`Modification de la cotisation de ${memberName} en cours...`, 'info');
+            // TODO: Implémenter la logique de modification de la cotisation
+        }
+    }
+    
+    // Gérer les boutons de suppression pour les cotisations (boutons avec class .btn-icon.delete)
+    if (e.target.closest('.btn-icon.delete') && e.target.closest('#contributionsTableBody')) {
+        const row = e.target.closest('tr');
+        if (row) {
+            // Obtenir les données de la cotisation à partir de la ligne du tableau
+            const cells = row.querySelectorAll('td');
+            const memberName = cells[0].textContent;
+            
+            // Confirmer la suppression
+            if (confirm(`Êtes-vous sûr de vouloir supprimer la cotisation de ${memberName} ?`)) {
+                try {
+                    // Supprimer la ligne du tableau
+                    row.remove();
+                    showNotification(`Cotisation de ${memberName} supprimée avec succès!`, 'success');
+                } catch (error) {
+                    console.error('Erreur lors de la suppression de la cotisation:', error);
+                    showNotification(`Erreur lors de la suppression de la cotisation de ${memberName}`, 'error');
+                }
+            }
+        }
+    }
+    
+    // Gérer les boutons d'édition pour les événements (boutons avec class .edit dans les cartes)
+    if (e.target.closest('.event-card .edit')) {
+        const card = e.target.closest('.event-card');
         if (card) {
             // Obtenir le nom de l'élément à partir du titre
             const titleElement = card.querySelector('h3');
-            const itemName = titleElement ? titleElement.textContent : 'élément';
+            const itemName = titleElement ? titleElement.textContent : 'événement';
+            showNotification(`Modification de l'événement "${itemName}" en cours...`, 'info');
+            // TODO: Implémenter la logique de modification de l'événement
+        }
+    }
+    
+    // Gérer les boutons de suppression pour les événements (boutons avec class .delete dans les cartes)
+    if (e.target.closest('.event-card .delete')) {
+        const card = e.target.closest('.event-card');
+        if (card) {
+            // Obtenir le nom de l'élément à partir du titre
+            const titleElement = card.querySelector('h3');
+            const itemName = titleElement ? titleElement.textContent : 'événement';
             
             // Confirmer la suppression
-            if (confirm(`Êtes-vous sûr de vouloir supprimer ${itemName} ?`)) {
-                showNotification(`${itemName} supprimé avec succès!`, 'success');
-                // Supprimer la carte
-                card.remove();
+            if (confirm(`Êtes-vous sûr de vouloir supprimer l'événement "${itemName}" ?`)) {
+                try {
+                    // Supprimer la carte
+                    card.remove();
+                    showNotification(`Événement "${itemName}" supprimé avec succès!`, 'success');
+                } catch (error) {
+                    console.error('Erreur lors de la suppression de l\'événement:', error);
+                    showNotification(`Erreur lors de la suppression de l'événement "${itemName}"`, 'error');
+                }
+            }
+        }
+    }
+    
+    // Gérer les boutons d'édition pour les utilisateurs (boutons avec class .btn-icon.edit dans l'administration)
+    if (e.target.closest('.btn-icon.edit') && e.target.closest('#profilesTableBody')) {
+        const row = e.target.closest('tr');
+        if (row) {
+            // Obtenir les données de l'utilisateur à partir de la ligne du tableau
+            const cells = row.querySelectorAll('td');
+            const userName = cells[0].textContent;
+            showNotification(`Modification de l'utilisateur ${userName} en cours...`, 'info');
+            // TODO: Implémenter la logique de modification de l'utilisateur
+        }
+    }
+    
+    // Gérer les boutons de suppression pour les utilisateurs (boutons avec class .btn-icon.delete dans l'administration)
+    if (e.target.closest('.btn-icon.delete') && e.target.closest('#profilesTableBody')) {
+        const row = e.target.closest('tr');
+        if (row) {
+            // Obtenir les données de l'utilisateur à partir de la ligne du tableau
+            const cells = row.querySelectorAll('td');
+            const userName = cells[0].textContent;
+            
+            // Confirmer la suppression
+            if (confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur ${userName} ?`)) {
+                try {
+                    // Supprimer la ligne du tableau
+                    row.remove();
+                    showNotification(`Utilisateur ${userName} supprimé avec succès!`, 'success');
+                } catch (error) {
+                    console.error('Erreur lors de la suppression de l\'utilisateur:', error);
+                    showNotification(`Erreur lors de la suppression de l'utilisateur ${userName}`, 'error');
+                }
+            }
+        }
+    }
+    
+    // Gérer les boutons d'édition pour les profils (boutons avec class .edit dans les cartes de profils)
+    if (e.target.closest('.profile-card .edit')) {
+        const card = e.target.closest('.profile-card');
+        if (card) {
+            // Obtenir le nom de l'élément à partir du titre
+            const titleElement = card.querySelector('h3');
+            const itemName = titleElement ? titleElement.textContent : 'profil';
+            showNotification(`Modification du profil "${itemName}" en cours...`, 'info');
+            // TODO: Implémenter la logique de modification du profil
+        }
+    }
+    
+    // Gérer les boutons de suppression pour les profils (boutons avec class .delete dans les cartes de profils)
+    if (e.target.closest('.profile-card .delete')) {
+        const card = e.target.closest('.profile-card');
+        if (card) {
+            // Obtenir le nom de l'élément à partir du titre
+            const titleElement = card.querySelector('h3');
+            const itemName = titleElement ? titleElement.textContent : 'profil';
+            
+            // Confirmer la suppression
+            if (confirm(`Êtes-vous sûr de vouloir supprimer le profil "${itemName}" ?`)) {
+                try {
+                    // Supprimer la carte
+                    card.remove();
+                    showNotification(`Profil "${itemName}" supprimé avec succès!`, 'success');
+                } catch (error) {
+                    console.error('Erreur lors de la suppression du profil:', error);
+                    showNotification(`Erreur lors de la suppression du profil "${itemName}"`, 'error');
+                }
             }
         }
     }
     
     // Gérer les boutons de téléchargement dans les rapports
-    if (e.target.closest('.btn.download') || e.target.closest('.btn.btn-secondary .fa-download')) {
+    if (e.target.closest('.btn.download') || e.target.closest('.report-card .download')) {
         const card = e.target.closest('.report-card');
         if (card) {
             // Obtenir le nom du rapport à partir du titre
             const reportTitle = card.querySelector('h3').textContent;
             // Simuler le téléchargement du rapport
-            showNotification(`Téléchargement du rapport ${reportTitle} en cours...`, 'info');
+            showNotification(`Téléchargement du rapport "${reportTitle}" en cours...`, 'info');
             simulateReportDownload(reportTitle.replace(/\s+/g, '_'));
         }
     }
-    
+
     // Gérer les boutons de visualisation dans les rapports
-    if (e.target.closest('.btn.btn-secondary .fa-eye')) {
+    if (e.target.closest('.btn.view') || e.target.closest('.report-card .view')) {
         const card = e.target.closest('.report-card');
         if (card) {
             // Obtenir le nom du rapport à partir du titre
             const reportTitle = card.querySelector('h3').textContent;
-            showNotification(`Visualisation du rapport ${reportTitle}...`, 'info');
+            showNotification(`Visualisation du rapport "${reportTitle}"...`, 'info');
+            
+            // Simuler l'ouverture du rapport dans un nouvel onglet
+            setTimeout(() => {
+                showNotification(`Le rapport "${reportTitle}" s'ouvre dans un nouvel onglet.`, 'success');
+            }, 1000);
+        }
+    }
+    
+    // Gérer le bouton de réinitialisation des données
+    if (e.target.closest('#resetAllDataBtn')) {
+        if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les données ? Cette action est irréversible.')) {
+            try {
+                // Appeler la méthode de réinitialisation de la base de données
+                if (typeof db !== 'undefined' && typeof db.resetAllData === 'function') {
+                    db.resetAllData();
+                    
+                    // Mettre à jour les statistiques
+                    updateStats();
+                    
+                    // Afficher un message de succès
+                    showNotification('Toutes les données ont été réinitialisées avec succès!', 'success');
+                } else {
+                    showNotification('Erreur: Impossible de réinitialiser les données.', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la réinitialisation des données:', error);
+                showNotification('Erreur lors de la réinitialisation des données.', 'error');
+            }
         }
     }
 });

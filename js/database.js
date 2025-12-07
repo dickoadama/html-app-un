@@ -783,6 +783,31 @@ class UNDatabase {
         
         return null;
     }
+    
+    // Méthode pour réinitialiser complètement la base de données
+    resetAllData() {
+        // Réinitialiser tous les compteurs
+        this.nextIds = {
+            user: 1,
+            member: 1,
+            event: 1,
+            report: 1,
+            finance: 1
+        };
+        
+        // Vider toutes les collections
+        this.users = [];
+        this.members = [];
+        this.events = [];
+        this.reports = [];
+        this.finances = [];
+        
+        // Sauvegarder l'état vide
+        this.saveData();
+        
+        // Recharger les données pour s'assurer que tout est propre
+        this.loadData();
+    }
 }
 
 // Exporter l'instance de la base de données
