@@ -166,7 +166,7 @@ function setupForms() {
         memberForm.addEventListener('submit', function(e) {
             e.preventDefault();
             // Logique de traitement du formulaire de membre
-            alert('Formulaire de membre soumis avec succès!');
+            showNotification('Membre ajouté avec succès!', 'success');
             closeModal('memberModal');
         });
     }
@@ -177,7 +177,7 @@ function setupForms() {
         eventForm.addEventListener('submit', function(e) {
             e.preventDefault();
             // Logique de traitement du formulaire d'événement
-            alert('Formulaire d\'événement soumis avec succès!');
+            showNotification('Événement ajouté avec succès!', 'success');
             closeModal('eventModal');
         });
     }
@@ -188,7 +188,7 @@ function setupForms() {
         userForm.addEventListener('submit', function(e) {
             e.preventDefault();
             // Logique de traitement du formulaire d'utilisateur
-            alert('Formulaire d\'utilisateur soumis avec succès!');
+            showNotification('Utilisateur ajouté avec succès!', 'success');
             closeModal('userModal');
         });
     }
@@ -199,7 +199,7 @@ function setupForms() {
         profileForm.addEventListener('submit', function(e) {
             e.preventDefault();
             // Logique de traitement du formulaire de profil
-            alert('Formulaire de profil soumis avec succès!');
+            showNotification('Profil mis à jour avec succès!', 'success');
             closeModal('profileModal');
         });
     }
@@ -210,7 +210,7 @@ function setupForms() {
         settingsForm.addEventListener('submit', function(e) {
             e.preventDefault();
             // Logique de traitement du formulaire de paramètres
-            alert('Paramètres sauvegardés avec succès!');
+            showNotification('Paramètres sauvegardés avec succès!', 'success');
         });
     }
     
@@ -227,7 +227,7 @@ function setupForms() {
             // Générer un nom de rapport basé sur le type et les dates
             const reportName = `rapport_${reportType}_${startDate}_to_${endDate}`;
             
-            alert('Rapport généré avec succès!');
+            showNotification('Génération du rapport en cours...', 'info');
             // Simuler le téléchargement du rapport
             simulateReportDownload(reportName);
             closeModal('reportModal');
@@ -259,14 +259,56 @@ function generateSecurePassword(length = 12) {
 
 // Simuler le téléchargement d'un rapport
 function simulateReportDownload(reportName = 'rapport') {
-    // Créer un élément de lien temporaire
-    const link = document.createElement('a');
-    link.href = 'data:text/plain;charset=utf-8,Rapport généré';
-    link.download = `${reportName}.pdf`;
-    link.click();
+    // Afficher l'overlay de chargement
+    showLoading();
     
-    // Afficher un message de confirmation
-    alert(`Le rapport ${reportName} a été téléchargé avec succès!`);
+    // Créer un conteneur pour la barre de progression
+    const loadingContent = document.querySelector('.loading-content');
+    if (loadingContent) {
+        // Ajouter la barre de progression
+        loadingContent.innerHTML = `
+            <div class="progress-container">
+                <div class="progress-bar" id="downloadProgress"></div>
+            </div>
+            <p id="progressText">Initialisation du téléchargement...</p>
+        `;
+    }
+    
+    // Simuler la progression du téléchargement
+    let progress = 0;
+    const progressBar = document.getElementById('downloadProgress');
+    const progressText = document.getElementById('progressText');
+    
+    const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 10) + 1;
+        if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval);
+            
+            // Simuler un court délai avant le téléchargement
+            setTimeout(() => {
+                // Créer un élément de lien temporaire
+                const link = document.createElement('a');
+                link.href = 'data:text/plain;charset=utf-8,Rapport généré';
+                link.download = `${reportName}.pdf`;
+                link.click();
+                
+                // Masquer l'overlay de chargement
+                hideLoading();
+                
+                // Afficher une notification de succès
+                showNotification(`Le rapport ${reportName} a été téléchargé avec succès!`, 'success');
+            }, 500);
+        }
+        
+        if (progressBar) {
+            progressBar.style.width = `${progress}%`;
+        }
+        
+        if (progressText) {
+            progressText.textContent = `Téléchargement en cours... ${progress}%`;
+        }
+    }, 100);
 }
 
 // Gérer les modals
@@ -345,7 +387,7 @@ function setupTableActions() {
             if (row) {
                 // Logique d'édition
                 console.log('Édition de la ligne:', row);
-                alert('Fonction d\'édition à implémenter');
+                showNotification('Fonction d\'édition à implémenter', 'info');
                 // Vous pouvez ajouter ici la logique pour ouvrir un modal d'édition
                 // avec les données de la ligne sélectionnée
             }
@@ -356,7 +398,7 @@ function setupTableActions() {
             if (row && confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
                 // Logique de suppression
                 row.remove();
-                alert('Élément supprimé avec succès');
+                showNotification('Élément supprimé avec succès', 'success');
             }
         }
         
@@ -367,6 +409,7 @@ function setupTableActions() {
                 // Obtenir le nom du rapport à partir du titre
                 const reportTitle = card.querySelector('h3').textContent;
                 // Simuler le téléchargement du rapport
+                showNotification(`Téléchargement du rapport ${reportTitle} en cours...`, 'info');
                 simulateReportDownload(reportTitle.replace(/\s+/g, '_'));
             }
         }
@@ -377,7 +420,7 @@ function setupTableActions() {
             if (card) {
                 // Obtenir le nom du rapport à partir du titre
                 const reportTitle = card.querySelector('h3').textContent;
-                alert(`Visualisation du rapport: ${reportTitle}`);
+                showNotification(`Visualisation du rapport: ${reportTitle}`, 'info');
                 // Dans une implémentation réelle, vous ouvririez un modal avec le contenu du rapport
             }
         }
@@ -388,7 +431,7 @@ function setupTableActions() {
             if (card) {
                 // Obtenir le nom de l'événement à partir du titre
                 const eventName = card.querySelector('h3').textContent;
-                alert(`Édition de l'événement: ${eventName}`);
+                showNotification(`Édition de l'événement: ${eventName}`, 'info');
                 // Dans une implémentation réelle, vous ouvririez un modal d'édition
             }
         }
@@ -402,12 +445,70 @@ function setupTableActions() {
                 if (confirm(`Êtes-vous sûr de vouloir supprimer l'événement: ${eventName} ?`)) {
                     // Logique de suppression
                     card.remove();
-                    alert(`Événement ${eventName} supprimé avec succès`);
+                    showNotification(`Événement ${eventName} supprimé avec succès`, 'success');
                 }
             }
         }
     });
 }
 
-// Initialiser les actions de tableau
-setupTableActions();
+// Fonction pour afficher l'overlay de chargement
+function showLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+    }
+}
+
+// Fonction pour masquer l'overlay de chargement
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+}
+
+// Système de notifications
+const notificationContainer = document.getElementById('notificationContainer');
+
+function showNotification(message, type = 'info') {
+    if (!notificationContainer) return;
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    const iconMap = {
+        success: 'fa-check-circle',
+        error: 'fa-exclamation-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle'
+    };
+    
+    const iconClass = iconMap[type] || iconMap.info;
+    
+    notification.innerHTML = `
+        <div class="notification-content">
+            <div class="notification-icon">
+                <i class="fas ${iconClass}"></i>
+            </div>
+            <div class="notification-message">${message}</div>
+            <button class="notification-close">&times;</button>
+        </div>
+    `;
+    
+    // Ajouter l'événement de fermeture
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', () => {
+        notification.remove();
+    });
+    
+    // Ajouter la notification au conteneur
+    notificationContainer.appendChild(notification);
+    
+    // Supprimer automatiquement après 5 secondes
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}

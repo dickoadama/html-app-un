@@ -714,5 +714,28 @@
     <script src="js/database.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/script.js"></script>
+    <!-- Overlay de chargement -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Chargement en cours...</p>
+        </div>
+    </div>
+    
+    <!-- Conteneur de notifications -->
+    <div id="notificationContainer" class="notification-container"></div>
+    
+    <!-- Bouton flottant pour le service client -->
+    <div id="floatingSupportButton" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+        <button id="supportButton" style="background: linear-gradient(135deg, var(--secondary-color), var(--vibrant-blue)); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 24px; cursor: pointer; box-shadow: var(--enlarged-shadow); transition: all 0.3s ease;">
+            <i class="fas fa-headset"></i>
+        </button>
+    </div>
+    <script>
+        // Gérer le bouton de support flottant
+        document.getElementById('supportButton').addEventListener('click', function() {
+            alert('Service client\n\nPour toute assistance, veuillez contacter:\nEmail: support@un-association.fcfa\nTéléphone: +221 12 345 67 89');
+        });
+    </script>
 </body>
 </html>
