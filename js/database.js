@@ -44,7 +44,7 @@ class UNDatabase {
                 users: ["read"],
                 members: ["read"],
                 events: ["read"],
-                reports: ["read", "generate"],
+                reports: ["read"],
                 finances: ["read", "write", "create"]
             },
             secrétaire: {
@@ -298,6 +298,27 @@ class UNDatabase {
         ];
         
         // Sauvegarder les données initiales
+        this.saveData();
+    }
+    
+    // Méthode pour réinitialiser les données des membres et finances
+    resetMembersAndFinances() {
+        // Supprimer tous les membres sauf les utilisateurs par défaut
+        // Conserver uniquement les 5 utilisateurs par défaut
+        this.members = [];
+        
+        // Réinitialiser les finances à 0
+        this.finances = [];
+        
+        // Réinitialiser les événements (les supprimer tous)
+        this.events = [];
+        
+        // Réinitialiser les compteurs appropriés
+        this.nextIds.member = 1;
+        this.nextIds.finance = 1;
+        this.nextIds.event = 1;
+        
+        // Sauvegarder les changements
         this.saveData();
     }
     
