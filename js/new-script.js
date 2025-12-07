@@ -110,13 +110,39 @@ function showPage(pageName) {
     if (pageName === 'dashboard') {
         updateStats();
     }
+    
+    // Si on affiche la page d'administration, s'assurer que les onglets sont bien configurés
+    if (pageName === 'administration') {
+        // Réinitialiser l'onglet actif
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Activer le premier onglet (Utilisateurs)
+        const firstTabBtn = document.querySelector('.tab-btn[data-tab="users"]');
+        if (firstTabBtn) {
+            firstTabBtn.classList.add('active');
+        }
+        
+        // Masquer tous les onglets
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.style.display = 'none';
+        });
+        
+        // Afficher le premier onglet
+        const firstTab = document.getElementById('usersTab');
+        if (firstTab) {
+            firstTab.style.display = 'block';
+        }
+    }
 }
 
 // Configurer les onglets
 function setupTabs() {
     // Gérer les clics sur les onglets d'administration
     document.querySelectorAll('[data-tab]').forEach(tab => {
-        tab.addEventListener('click', function() {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
             const tabName = this.getAttribute('data-tab');
             showTab(tabName);
         });
