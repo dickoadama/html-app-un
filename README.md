@@ -49,24 +49,6 @@ Ce système permet à l'administrateur de gérer les utilisateurs de l'applicati
 1. Cliquez sur le bouton "Supprimer" dans la ligne de l'utilisateur concerné
 2. Confirmez la suppression dans la boîte de dialogue
 
-## Hébergement sur GitHub Pages
-
-### Étapes pour déployer le site
-1. Créez un compte GitHub si vous n'en avez pas
-2. Créez un nouveau dépôt sur GitHub (nommez-le par exemple "un-site-web")
-3. Connectez le dépôt local au dépôt distant :
-   ```bash
-   git remote add origin https://github.com/VOTRE_NOM_UTILISATEUR/un-site-web.git
-   git branch -M main
-   git push -u origin main
-   ```
-4. Activez GitHub Pages dans les paramètres du dépôt :
-   - Allez dans "Settings" > "Pages"
-   - Sélectionnez "Deploy from a branch"
-   - Choisissez la branche "main" et le dossier "/ (root)"
-5. Accédez à votre site à l'adresse :
-   `https://VOTRE_NOM_UTILISATEUR.github.io/un-site-web/`
-
 ## Sécurité
 - Les mots de passe sont stockés en clair dans cette version de démonstration
 - Dans une application de production, les mots de passe devraient être hashés

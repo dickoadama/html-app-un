@@ -27,8 +27,14 @@ function checkAuthentication() {
     
     // Si l'utilisateur n'est pas connecté et qu'on n'est pas sur la page de connexion, rediriger vers la connexion
     if (!currentUser && currentPage !== 'login.html' && currentPage !== 'profile.html') {
-        window.location.href = 'login.html';
-        return;
+        // Vérifier si nous sommes dans un environnement de développement local
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '') {
+            // En développement local, permettre l'accès sans authentification
+            console.warn('Mode développement : accès sans authentification');
+        } else {
+            window.location.href = 'login.html';
+            return;
+        }
     }
     
     // Si l'utilisateur est connecté, mettre à jour l'affichage

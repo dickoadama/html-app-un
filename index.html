@@ -24,9 +24,6 @@
                         <a href="#" class="nav-link" data-page="members">MEMBRES</a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link" data-page="contributions">COTISATIONS</a>
-                    </li>
-                    <li>
                         <a href="#" class="nav-link" data-page="events">ÉVÉNEMENTS</a>
                     </li>
                     <li>
@@ -175,14 +172,13 @@
             <section id="events" class="page">
                 <h2>ÉVÉNEMENTS</h2>
                 <div class="events-actions">
-                    <button class="btn btn-primary" id="addEventBtn"><i class="fas fa-plus"></i> Ajouter un événement</button>
+                    <button class="btn btn-primary" id="addEventBtn">Ajouter un événement</button>
                     <div class="search-box">
                         <input type="text" id="searchEvents" placeholder="Rechercher un événement...">
-                        <i class="fas fa-search"></i>
                     </div>
                 </div>
                 
-                <div class="events-grid" id="eventsContainer">
+                <div class="events-grid">
                     <div class="event-card">
                         <h3>Assemblée générale annuelle</h3>
                         <div class="event-date"><i class="far fa-calendar-alt"></i> 15 décembre 2024</div>
@@ -227,7 +223,7 @@
                         <div class="report-period">Novembre 2024</div>
                         <div class="report-status">Généré le 01/12/2024</div>
                         <div class="report-actions">
-                            <button class="btn btn-secondary"><i class="fas fa-download"></i> Télécharger</button>
+                            <button class="btn btn-secondary download"><i class="fas fa-download"></i> Télécharger</button>
                             <button class="btn btn-secondary"><i class="fas fa-eye"></i> Voir</button>
                         </div>
                     </div>
@@ -247,14 +243,14 @@
                         <div class="report-period">2024</div>
                         <div class="report-status">Généré le 15/01/2025</div>
                         <div class="report-actions">
-                            <button class="btn btn-secondary"><i class="fas fa-download"></i> Télécharger</button>
+                            <button class="btn btn-secondary download"><i class="fas fa-download"></i> Télécharger</button>
                             <button class="btn btn-secondary"><i class="fas fa-eye"></i> Voir</button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Page Administration Principale -->
+            <!-- Page Administration -->
             <section id="administration" class="page">
                 <h2>ADMINISTRATION</h2>
                 <div class="admin-tabs">
@@ -426,455 +422,297 @@
                     </div>
                 </div>
             </section>
-            
-            <!-- Page Cotisations -->
-            <section id="contributions" class="page">
-                <h2>COTISATIONS DES MEMBRES</h2>
-                <div class="contributions-actions">
-                    <button class="btn btn-primary" id="addContributionBtn"><i class="fas fa-plus"></i> Ajouter une cotisation</button>
-                    <div class="search-box">
-                        <input type="text" id="searchContributions" placeholder="Rechercher une cotisation...">
-                        <i class="fas fa-search"></i>
-                    </div>
-                </div>
-                
-                <div class="contributions-summary">
-                    <div class="summary-card">
-                        <h3>Total des cotisations</h3>
-                        <p id="totalContributions">5.240 FCFA</p>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Cotisations en attente</h3>
-                        <p id="pendingContributions">12</p>
-                    </div>
-                    <div class="summary-card">
-                        <h3>Dernière cotisation</h3>
-                        <p id="lastContribution">Jean Martin - 5.000 FCFA</p>
-                    </div>
-                </div>
-                
-                <div class="contributions-table-container">
-                    <table class="contributions-table">
-                        <thead>
-                            <tr>
-                                <th>Membre</th>
-                                <th>Montant</th>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="contributionsTableBody">
-                            <tr>
-                                <td>Jean Martin</td>
-                                <td>5.000 FCFA</td>
-                                <td>01/12/2024</td>
-                                <td>Mensuelle</td>
-                                <td><span class="status active">Payée</span></td>
-                                <td>
-                                    <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Marie Lambert</td>
-                                <td>5.000 FCFA</td>
-                                <td>01/12/2024</td>
-                                <td>Mensuelle</td>
-                                <td><span class="status active">Payée</span></td>
-                                <td>
-                                    <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Pierre Dubois</td>
-                                <td>5.000 FCFA</td>
-                                <td>01/12/2024</td>
-                                <td>Mensuelle</td>
-                                <td><span class="status active">Payée</span></td>
-                                <td>
-                                    <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Sophie Leroy</td>
-                                <td>5.000 FCFA</td>
-                                <td>01/12/2024</td>
-                                <td>Mensuelle</td>
-                                <td><span class="status active">Payée</span></td>
-                                <td>
-                                    <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon delete"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="pagination">
-                    <button class="btn btn-secondary">Précédent</button>
-                    <span>Page 1 sur 3</span>
-                    <button class="btn btn-secondary">Suivant</button>
-                </div>
-            </section>
+        </div>
+    </main>
 
-            <!-- Modal pour ajouter/modifier une cotisation -->
-            <div id="contributionModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2 id="modalTitle">Ajouter une cotisation</h2>
-                    <form id="contributionForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="memberSelect">Membre:</label>
-                                <select id="memberSelect" required>
-                                    <option value="">Sélectionner un membre</option>
-                                    <option value="1">Pierre Dubois</option>
-                                    <option value="2">Marie Lambert</option>
-                                    <option value="3">Jean Martin</option>
-                                    <option value="4">Sophie Leroy</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="contributionAmount">Montant (FCFA):</label>
-                                <input type="number" id="contributionAmount" min="100" step="100" required>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="contributionDate">Date:</label>
-                                <input type="date" id="contributionDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="contributionType">Type:</label>
-                                <select id="contributionType" required>
-                                    <option value="">Sélectionner un type</option>
-                                    <option value="mensuelle">Mensuelle</option>
-                                    <option value="annuelle">Annuelle</option>
-                                    <option value="événement">Événement</option>
-                                    <option value="don">Don</option>
-                                </select>
-                            </div>
+    <!-- Modal pour ajouter/modifier un membre -->
+    <div class="modal" id="memberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Ajouter un membre</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="memberForm">
+                    <div class="form-group">
+                        <label for="memberName">Nom complet</label>
+                        <input type="text" id="memberName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberEmail">Email</label>
+                        <input type="email" id="memberEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberRole">Rôle</label>
+                        <select id="memberRole" required>
+                            <option value="">Sélectionnez un rôle</option>
+                            <option value="Président">Président</option>
+                            <option value="Secrétaire">Secrétaire</option>
+                            <option value="Trésorier">Trésorier</option>
+                            <option value="Membre">Membre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberStatus">Statut</label>
+                        <select id="memberStatus" required>
+                            <option value="actif">Actif</option>
+                            <option value="inactif">Inactif</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="createUserAccount">
+                            <input type="checkbox" id="createUserAccount" checked> 
+                            Créer un compte utilisateur associé
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelMember">Retour</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour ajouter/modifier un événement -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="eventModalTitle">Ajouter un événement</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <div class="form-group">
+                        <label for="eventTitle">Titre</label>
+                        <input type="text" id="eventTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDate">Date</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventTime">Heure</label>
+                        <input type="time" id="eventTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventLocation">Lieu</label>
+                        <input type="text" id="eventLocation" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDescription">Description</label>
+                        <textarea id="eventDescription" rows="4" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelEvent">Retour</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour ajouter/modifier un utilisateur -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="userModalTitle">Ajouter un utilisateur</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Nom complet</label>
+                            <input type="text" id="fullName" required>
                         </div>
                         <div class="form-group">
-                            <label for="contributionDescription">Description:</label>
-                            <textarea id="contributionDescription" rows="3"></textarea>
+                            <label for="username">Nom d'utilisateur</label>
+                            <input type="text" id="username" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required>
                         </div>
                         <div class="form-group">
-                            <label for="contributionStatus">Statut:</label>
-                            <select id="contributionStatus" required>
-                                <option value="payée">Payée</option>
-                                <option value="en_attente">En attente</option>
-                                <option value="en_retard">En retard</option>
+                            <label for="phone">Téléphone</label>
+                            <input type="tel" id="phone">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="role">Rôle</label>
+                            <select id="role" required>
+                                <option value="">Sélectionnez un rôle</option>
+                                <option value="superadmin">Super Administrateur</option>
+                                <option value="administrateur">Administrateur</option>
+                                <option value="trésorier">Trésorier</option>
+                                <option value="secrétaire">Secrétaire</option>
+                                <option value="membre">Membre</option>
                             </select>
                         </div>
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" id="cancelContributionBtn">Annuler</button>
-                            <button type="submit" class="btn btn-primary">Enregistrer</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Modal pour ajouter/modifier un membre -->
-            <div class="modal" id="memberModal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 id="modalTitle">Ajouter un membre</h3>
-                        <span class="close">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <form id="memberForm">
-                            <div class="form-group">
-                                <label for="memberName">Nom complet</label>
-                                <input type="text" id="memberName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="memberEmail">Email</label>
-                                <input type="email" id="memberEmail" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="memberRole">Rôle</label>
-                                <select id="memberRole" required>
-                                    <option value="">Sélectionnez un rôle</option>
-                                    <option value="Président">Président</option>
-                                    <option value="Secrétaire">Secrétaire</option>
-                                    <option value="Trésorier">Trésorier</option>
-                                    <option value="Membre">Membre</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="memberStatus">Statut</label>
-                                <select id="memberStatus" required>
-                                    <option value="actif">Actif</option>
-                                    <option value="inactif">Inactif</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="createUserAccount">
-                                    <input type="checkbox" id="createUserAccount" checked> 
-                                    Créer un compte utilisateur associé
-                                </label>
-                            </div>
-                            <div class="form-actions">
-                                <button type="button" class="btn btn-secondary" id="cancelMember">Retour</button>
-                                <button type="submit" class="btn btn-primary">Valider</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal pour ajouter/modifier un événement -->
-            <div id="eventModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2 id="eventModalTitle">Ajouter un événement</h2>
-                    <form id="eventForm">
-                        <input type="hidden" id="eventId">
                         <div class="form-group">
-                            <label for="eventTitle">Titre de l'événement:</label>
-                            <input type="text" id="eventTitle" required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="eventDate">Date:</label>
-                                <input type="date" id="eventDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="eventTime">Heure:</label>
-                                <input type="time" id="eventTime">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="eventLocation">Lieu:</label>
-                            <input type="text" id="eventLocation" placeholder="Ex: Salle des fêtes, 123 Rue de la Paix">
-                        </div>
-                        <div class="form-group">
-                            <label for="eventDescription">Description:</label>
-                            <textarea id="eventDescription" rows="4" placeholder="Décrivez l'événement en détail..."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="eventStatus">Statut:</label>
-                            <select id="eventStatus">
-                                <option value="programmé">Programmé</option>
-                                <option value="en_cours">En cours</option>
-                                <option value="terminé">Terminé</option>
-                                <option value="annulé">Annulé</option>
+                            <label for="status">Statut</label>
+                            <select id="status" required>
+                                <option value="actif">Actif</option>
+                                <option value="inactif">Inactif</option>
                             </select>
                         </div>
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" id="cancelEventBtn">Annuler</button>
-                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="password" id="password" required>
+                            <button type="button" id="generatePassword" class="btn btn-secondary">Générer</button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmer le mot de passe</label>
+                        <input type="password" id="confirmPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="permissions">Permissions spéciales</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="canExport">
+                            <label for="canExport">Peut exporter des données</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="canDelete">
+                            <label for="canDelete">Peut supprimer des enregistrements</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="canModifySettings">
+                            <label for="canModifySettings">Peut modifier les paramètres</label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelUser">Retour</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
             </div>
+        </div>
+    </div>
 
-            <!-- Modal pour ajouter/modifier un utilisateur -->
-            <div class="modal" id="userModal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 id="userModalTitle">Ajouter un utilisateur</h3>
-                        <span class="close">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <form id="userForm">
-                            <input type="hidden" id="userId">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="fullName">Nom complet</label>
-                                    <input type="text" id="fullName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="username">Nom d'utilisateur</label>
-                                    <input type="text" id="username" required>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" id="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone">Téléphone</label>
-                                    <input type="tel" id="phone">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="role">Rôle</label>
-                                    <select id="role" required>
-                                        <option value="">Sélectionnez un rôle</option>
-                                        <option value="superadmin">Super Administrateur</option>
-                                        <option value="administrateur">Administrateur</option>
-                                        <option value="trésorier">Trésorier</option>
-                                        <option value="secrétaire">Secrétaire</option>
-                                        <option value="membre">Membre</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="status">Statut</label>
-                                    <select id="status" required>
-                                        <option value="actif">Actif</option>
-                                        <option value="inactif">Inactif</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Mot de passe</label>
-                                <div style="display: flex; gap: 10px;">
-                                    <input type="password" id="password" required>
-                                    <button type="button" id="generatePassword" class="btn btn-secondary">Générer</button>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="confirmPassword">Confirmer le mot de passe</label>
-                                <input type="password" id="confirmPassword" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="permissions">Permissions spéciales</label>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="canExport">
-                                    <label for="canExport">Peut exporter des données</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="canDelete">
-                                    <label for="canDelete">Peut supprimer des enregistrements</label>
-                                </div>
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="canModifySettings">
-                                    <label for="canModifySettings">Peut modifier les paramètres</label>
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="button" class="btn btn-secondary" id="cancelUser">Retour</button>
-                                <button type="submit" class="btn btn-primary">Valider</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    <!-- Modal pour ajouter/modifier un profil -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="profileModalTitle">Ajouter un profil</h3>
+                <span class="close">&times;</span>
             </div>
-
-            <!-- Modal pour ajouter/modifier un profil -->
-            <div class="modal" id="profileModal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 id="profileModalTitle">Ajouter un profil</h3>
-                        <span class="close">&times;</span>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <input type="hidden" id="profileId">
+                    <div class="form-group">
+                        <label for="profileName">Nom complet</label>
+                        <input type="text" id="profileName" required>
                     </div>
-                    <div class="modal-body">
-                        <form id="profileForm">
-                            <input type="hidden" id="profileId">
-                            <div class="form-group">
-                                <label for="profileName">Nom complet</label>
-                                <input type="text" id="profileName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="profileEmail">Email</label>
-                                <input type="email" id="profileEmail" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="profileRole">Rôle</label>
-                                <select id="profileRole" required>
-                                    <option value="">Sélectionnez un rôle</option>
-                                    <option value="superadmin">Super Administrateur</option>
-                                    <option value="Administrateur">Administrateur</option>
-                                    <option value="Trésorier">Trésorier</option>
-                                    <option value="Secrétaire">Secrétaire</option>
-                                    <option value="Membre">Membre</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="profileStatus">Statut</label>
-                                <select id="profileStatus" required>
-                                    <option value="actif">Actif</option>
-                                    <option value="inactif">Inactif</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="profileBio">Biographie</label>
-                                <textarea id="profileBio" rows="4"></textarea>
-                            </div>
-                            <div class="form-actions">
-                                <button type="button" class="btn btn-secondary" id="cancelProfile">Retour</button>
-                                <button type="submit" class="btn btn-primary">Valider</button>
-                            </div>
-                        </form>
+                    <div class="form-group">
+                        <label for="profileEmail">Email</label>
+                        <input type="email" id="profileEmail" required>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="profileRole">Rôle</label>
+                        <select id="profileRole" required>
+                            <option value="">Sélectionnez un rôle</option>
+                            <option value="superadmin">Super Administrateur</option>
+                            <option value="Administrateur">Administrateur</option>
+                            <option value="Trésorier">Trésorier</option>
+                            <option value="Secrétaire">Secrétaire</option>
+                            <option value="Membre">Membre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileStatus">Statut</label>
+                        <select id="profileStatus" required>
+                            <option value="actif">Actif</option>
+                            <option value="inactif">Inactif</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileBio">Biographie</label>
+                        <textarea id="profileBio" rows="4"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelProfile">Retour</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </form>
             </div>
+        </div>
+    </div>
 
-            <!-- Modal pour générer un rapport -->
-            <div class="modal" id="reportModal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>Générer un rapport</h3>
-                        <span class="close">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <form id="reportForm">
-                            <div class="form-group">
-                                <label for="reportType">Type de rapport</label>
-                                <select id="reportType" required>
-                                    <option value="">Sélectionnez un type de rapport</option>
-                                    <option value="financial">Rapport financier</option>
-                                    <option value="activities">Rapport d'activités</option>
-                                    <option value="members">Rapport des membres</option>
-                                    <option value="events">Rapport des événements</option>
-                                    <option value="annual">Rapport annuel</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="startDate">Date de début</label>
-                                    <input type="date" id="startDate" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="endDate">Date de fin</label>
-                                    <input type="date" id="endDate" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="reportFormat">Format du rapport</label>
-                                <select id="reportFormat" required>
-                                    <option value="pdf">PDF</option>
-                                    <option value="excel">Excel</option>
-                                    <option value="csv">CSV</option>
-                                    <option value="html">HTML</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="includeCharts" checked> 
-                                    Inclure les graphiques
-                                </label>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="includeSummary" checked> 
-                                    Inclure le résumé
-                                </label>
-                            </div>
-                            
-                            <div class="form-actions">
-                                <button type="button" class="btn btn-secondary" id="cancelReport">Annuler</button>
-                                <button type="submit" class="btn btn-primary">Générer</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    <!-- Modal pour générer un rapport -->
+    <div class="modal" id="reportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Générer un rapport</h3>
+                <span class="close">&times;</span>
             </div>
+            <div class="modal-body">
+                <form id="reportForm">
+                    <div class="form-group">
+                        <label for="reportType">Type de rapport</label>
+                        <select id="reportType" required>
+                            <option value="">Sélectionnez un type de rapport</option>
+                            <option value="financial">Rapport financier</option>
+                            <option value="activities">Rapport d'activités</option>
+                            <option value="members">Rapport des membres</option>
+                            <option value="events">Rapport des événements</option>
+                            <option value="annual">Rapport annuel</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate">Date de début</label>
+                            <input type="date" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">Date de fin</label>
+                            <input type="date" id="endDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reportFormat">Format du rapport</label>
+                        <select id="reportFormat" required>
+                            <option value="pdf">PDF</option>
+                            <option value="excel">Excel</option>
+                            <option value="csv">CSV</option>
+                            <option value="html">HTML</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="includeCharts" checked> 
+                            Inclure les graphiques
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="includeSummary" checked> 
+                            Inclure le résumé
+                        </label>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelReport">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Générer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-            <script src="js/database.js"></script>
-            <script src="js/auth.js"></script>
-            <script src="js/script.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
