@@ -26,7 +26,7 @@ function checkAuthentication() {
     }
     
     // Si l'utilisateur n'est pas connecté et qu'on n'est pas sur la page de connexion, rediriger vers la connexion
-    if (!currentUser && currentPage !== 'login.html' && currentPage !== 'profile.html') {
+    if (!currentUser && currentPage !== 'login.html' && currentPage !== 'profile.html' && currentPage !== 'register.html') {
         // Vérifier si nous sommes dans un environnement de développement local
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '') {
             // En développement local, permettre l'accès sans authentification
@@ -94,6 +94,12 @@ function handleLogin() {
     const password = document.getElementById('password').value;
     
     try {
+        // S'assurer que la base de données est instanciée
+        if (typeof db === 'undefined') {
+            showError('Erreur de chargement de la base de données. Veuillez réessayer.');
+            return;
+        }
+        
         // Authentifier l'utilisateur
         const user = db.authenticate(username, password);
         
@@ -142,7 +148,9 @@ function showError(message) {
 // Gérer la déconnexion
 function handleLogout() {
     // Déconnecter l'utilisateur
-    db.logout();
+    if (typeof db !== 'undefined') {
+        db.logout();
+    }
     localStorage.removeItem('currentUser');
     window.location.href = 'login.html';
 }

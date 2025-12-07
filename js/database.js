@@ -424,6 +424,15 @@ class Database {
         return this.currentUser !== null;
     }
     
+    // Obtenir les détails complets de l'utilisateur courant
+    getCurrentUserDetails() {
+        if (!this.isAuthenticated()) {
+            return null;
+        }
+        
+        // Retourner l'utilisateur courant avec tous ses détails
+        return this.currentUser;
+    }    
     // Obtenir le rôle de l'utilisateur actuel
     getCurrentUserRole() {
         return this.currentUser ? this.currentUser.role : null;
@@ -501,32 +510,44 @@ class Database {
         throw new Error("Permission denied: Cannot read users");
     }
     
-    addUser(userData) {
-        if (this.hasPermission('users', 'create')) {
-            // Vérifier si le nom d'utilisateur existe déjà
+    addUser(userData, skipPermissionCheck = false) {
+        // Si on saute la vérification des permissions (pour l'inscription publique), on continue directement
+        if (!skipPermissionCheck) {
+            if (this.hasPermission('users', 'create')) {
+                // Vérifier si le nom d'utilisateur existe déjà
+                if (this.users.some(u => u.username === userData.username)) {
+                    throw new Error("Ce nom d'utilisateur existe déjà.");
+                }
+                
+                // Vérifier les permissions pour créer des administrateurs
+                if (userData.role === 'administrateur' && !this.canCreateAdmins()) {
+                    throw new Error("Seul le super admin peut créer des administrateurs.");
+                }
+                
+                // Vérifier les permissions pour créer des utilisateurs de niveau inférieur
+                if (['trésorier', 'secrétaire', 'membre'].includes(userData.role) && !this.canManageUsers(userData.role)) {
+                    throw new Error("Vous n'avez pas la permission de créer cet utilisateur.");
+                }
+            } else {
+                throw new Error("Permission denied: Cannot create users");
+            }
+        } else {
+            // Pour l'inscription publique, vérifier seulement si le nom d'utilisateur existe déjà
             if (this.users.some(u => u.username === userData.username)) {
                 throw new Error("Ce nom d'utilisateur existe déjà.");
             }
             
-            // Vérifier les permissions pour créer des administrateurs
-            if (userData.role === 'administrateur' && !this.canCreateAdmins()) {
-                throw new Error("Seul le super admin peut créer des administrateurs.");
-            }
-            
-            // Vérifier les permissions pour créer des utilisateurs de niveau inférieur
-            if (['trésorier', 'secrétaire', 'membre'].includes(userData.role) && !this.canManageUsers(userData.role)) {
-                throw new Error("Vous n'avez pas la permission de créer cet utilisateur.");
-            }
-            
-            const newUser = {
-                id: this.nextIds.user++,
-                ...userData
-            };
-            this.users.push(newUser);
-            this.saveData(); // Sauvegarder les changements
-            return newUser;
+            // Pour l'inscription publique, forcer le rôle à 'membre' pour des raisons de sécurité
+            userData.role = 'membre';
         }
-        throw new Error("Permission denied: Cannot create users");
+        
+        const newUser = {
+            id: this.nextIds.user++,
+            ...userData
+        };
+        this.users.push(newUser);
+        this.saveData(); // Sauvegarder les changements
+        return newUser;
     }
     
     updateUser(userId, userData) {

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UN - Inscription</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-logo">
+            <h1>UN</h1>
+            <p>Gestion d'Association</p>
+            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.9;">
+                Créez un compte pour accéder à votre espace d'administration
+            </p>
+        </div>
+        <div class="login-form-container">
+            <h2>INSCRIPTION</h2>
+            <div id="errorMessage" class="error-message" style="display: none; background: #ffebee; color: #c62828; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 0.85rem;">
+                <!-- Message d'erreur sera inséré ici -->
+            </div>
+            <div id="successMessage" class="success-message" style="display: none; background: #e8f5e9; color: #2e7d32; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 0.85rem;">
+                <!-- Message de succès sera inséré ici -->
+            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="fullName">Nom complet</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Téléphone</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmer le mot de passe</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary login-btn">S'inscrire</button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Déjà un compte ? <a href="login.html">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script>
+        // Attendre que la base de données soit chargée
+        document.addEventListener('DOMContentLoaded', function() {
+            // S'assurer que la base de données est instanciée
+            if (typeof db === 'undefined') {
+                // Si db n'est pas défini, attendre un peu puis réessayer
+                setTimeout(function() {
+                    if (typeof db !== 'undefined') {
+                        initRegistration();
+                    } else {
+                        console.error('Impossible de charger la base de données');
+                        showError('Erreur de chargement de la base de données. Veuillez réessayer.');
+                    }
+                }, 1000);
+            } else {
+                initRegistration();
+            }
+        });
+
+        function initRegistration() {
+            // Gérer la soumission du formulaire d'inscription
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleRegistration();
+                });
+            }
+        }
+
+        // Gérer l'inscription
+        function handleRegistration() {
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Vérifier que les mots de passe correspondent
+            if (password !== confirmPassword) {
+                showError('Les mots de passe ne correspondent pas.');
+                return;
+            }
+            
+            // Vérifier que le mot de passe a une longueur minimale
+            if (password.length < 6) {
+                showError('Le mot de passe doit contenir au moins 6 caractères.');
+                return;
+            }
+            
+            try {
+                // Préparer les données de l'utilisateur
+                const userData = {
+                    username: username,
+                    password: password,
+                    fullName: fullName,
+                    email: email,
+                    phone: phone,
+                    dateInscription: new Date().toISOString().split('T')[0],
+                    lastLogin: "Jamais",
+                    status: "actif",
+                    permissions: {
+                        canExport: false,
+                        canDelete: false,
+                        canModifySettings: false
+                    }
+                };
+                
+                // Ajouter l'utilisateur via la base de données avec skipPermissionCheck=true pour l'inscription publique
+                const newUser = db.addUser(userData, true);
+                
+                // Afficher un message de succès
+                showSuccess('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+                
+                // Réinitialiser le formulaire après un court délai
+                setTimeout(() => {
+                    document.getElementById('registerForm').reset();
+                }, 2000);
+            } catch (error) {
+                console.error('Erreur lors de l\'inscription:', error);
+                showError(error.message || 'Une erreur s\'est produite lors de l\'inscription. Veuillez réessayer.');
+            }
+        }
+
+        // Afficher une erreur
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+                
+                // Masquer l'erreur après 5 secondes
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Afficher un message de succès
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            const errorDiv = document.getElementById('errorMessage');
+            if (successDiv) {
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+                
+                // Masquer le message après 5 secondes
+                setTimeout(() => {
+                    successDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

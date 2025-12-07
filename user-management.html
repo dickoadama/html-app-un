@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UN - Gestion des Utilisateurs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/new-style.css">
+</head>
+<body>
+    <!-- En-tête -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>UN</h1>
+                <span>Gestion d'Association</span>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li><a href="app.html" class="nav-link">TABLEAU DE BORD</a></li>
+                    <li><a href="app.html#members" class="nav-link">MEMBRES</a></li>
+                    <li><a href="app.html#contributions" class="nav-link">COTISATIONS</a></li>
+                    <li><a href="app.html#events" class="nav-link">ÉVÉNEMENTS</a></li>
+                    <li><a href="app.html#reports" class="nav-link">RAPPORTS</a></li>
+                    <li><a href="app.html#administration" class="nav-link active">ADMINISTRATION</a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <div class="user-info" id="userInfo">
+                    <span id="userName">Administrateur</span>
+                    <button id="logoutBtn" class="btn btn-secondary" style="margin-left: 15px; padding: 5px 10px;">Déconnexion</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Gestion des Utilisateurs -->
+            <section id="user-management" class="page active">
+                <div class="page-header">
+                    <h2><i class="fas fa-users-cog"></i> GESTION DES UTILISATEURS</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="addUserBtn"><i class="fas fa-plus"></i> Ajouter un utilisateur</button>
+                    </div>
+                </div>                
+                <div class="alert alert-warning">
+                    <p><strong>Hiérarchie des rôles :</strong></p>
+                    <p>• SUPER ADMIN peut créer des ADMINISTRATEURS</p>
+                    <p>• ADMINISTRATEURS peuvent créer des TRÉSORIERS, SECRÉTAIRES et MEMBRES</p>
+                </div>
+                
+                <div class="members-table-container">
+                    <table class="members-table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom d'utilisateur</th>
+                                <th>Nom complet</th>
+                                <th>Rôle</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Date d'inscription</th>
+                                <th>Dernière connexion</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les données seront chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal pour ajouter un utilisateur -->
+    <div class="modal" id="addUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ajouter un utilisateur</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur *</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe *</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fullName">Nom complet</label>
+                        <input type="text" id="fullName" name="fullName">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Téléphone</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Rôle *</label>
+                        <select id="role" name="role" required>
+                            <option value="">Sélectionnez un rôle</option>
+                            <option value="membre">Membre</option>
+                            <option value="secrétaire">Secrétaire</option>
+                            <option value="trésorier">Trésorier</option>
+                            <option value="administrateur">Administrateur</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelAddUser">Retour</button>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour modifier un utilisateur -->
+    <div class="modal" id="editUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Modifier un utilisateur</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId" name="id">
+                    <div class="form-group">
+                        <label for="editUsername">Nom d'utilisateur *</label>
+                        <input type="text" id="editUsername" name="username" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="editFullName">Nom complet</label>
+                        <input type="text" id="editFullName" name="fullName">
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Téléphone</label>
+                        <input type="tel" id="editPhone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="editRole">Rôle *</label>
+                        <select id="editRole" name="role" required>
+                            <option value="">Sélectionnez un rôle</option>
+                            <option value="membre">Membre</option>
+                            <option value="secrétaire">Secrétaire</option>
+                            <option value="trésorier">Trésorier</option>
+                            <option value="administrateur">Administrateur</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStatus">Statut *</label>
+                        <select id="editStatus" name="status" required>
+                            <option value="actif">Actif</option>
+                            <option value="inactif">Inactif</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelEditUser">Retour</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de chargement -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Chargement en cours...</p>
+        </div>
+    </div>
+
+    <!-- Conteneur de notifications -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/database.js"></script>
+    <script src="js/user-management.js"></script>
+</body>
+</html>

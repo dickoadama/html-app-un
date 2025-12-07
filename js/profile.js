@@ -159,12 +159,28 @@ function loadProfileInfo(user) {
         // Mettre à jour les détails
         document.getElementById('profileId').textContent = userDetails.id || '-';
         document.getElementById('profileUsername').textContent = userDetails.username || '-';
-        document.getElementById('profileRegistrationDate').textContent = userDetails.dateInscription || '-';
-        document.getElementById('profileLastLogin').textContent = userDetails.lastLogin || 'Jamais';
+        document.getElementById('profileRegistrationDate').textContent = formatDate(userDetails.dateInscription) || '-';
+        document.getElementById('profileLastLogin').textContent = formatDate(userDetails.lastLogin) || 'Jamais';
         document.getElementById('profileStatus').textContent = userDetails.status ? (userDetails.status === 'actif' ? 'Actif' : 'Inactif') : '-';
         
         // Mettre à jour les permissions
         updatePermissionsDisplay(userDetails.role);
+    }
+}
+
+// Fonction pour formater les dates
+function formatDate(dateString) {
+    if (!dateString || dateString === 'Jamais') return dateString;
+    
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    } catch (e) {
+        return dateString;
     }
 }
 

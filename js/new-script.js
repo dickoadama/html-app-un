@@ -17,8 +17,38 @@ function initializeApp() {
     setupTabs();
     updateStats();
     
+    // Configurer les gestionnaires d'événements pour les boutons de rapport
+    setupReportButtons();
+    
+    // Configurer les gestionnaires d'événements pour les actions CRUD
+    setupTableActions();
+    
     // Afficher la page du tableau de bord par défaut
     showPage('dashboard');
+}
+
+// Configurer les gestionnaires d'événements pour les boutons de rapport
+function setupReportButtons() {
+    // Gérer les clics sur les boutons de téléchargement de rapport
+    document.addEventListener('click', function(e) {
+        // Gérer les boutons de téléchargement
+        if (e.target.closest('.download') || e.target.closest('.btn.btn-secondary .fa-download')) {
+            const reportCard = e.target.closest('.report-card');
+            if (reportCard) {
+                const reportTitle = reportCard.querySelector('h3').textContent;
+                simulateReportDownload(reportTitle);
+            }
+        }
+        
+        // Gérer les boutons de visualisation
+        if (e.target.closest('.view') || e.target.closest('.btn.btn-secondary .fa-eye')) {
+            const reportCard = e.target.closest('.report-card');
+            if (reportCard) {
+                const reportTitle = reportCard.querySelector('h3').textContent;
+                showNotification(`Visualisation du rapport "${reportTitle}"`, 'info');
+            }
+        }
+    });
 }
 
 // Mettre à jour les informations de l'utilisateur
@@ -146,7 +176,7 @@ function showPage(pageName) {
 // Configurer les onglets
 function setupTabs() {
     // Gérer les clics sur les onglets d'administration
-    document.querySelectorAll('[data-tab]').forEach(tab => {
+    document.querySelectorAll('.tab-btn').forEach(tab => {
         tab.addEventListener('click', function(e) {
             e.preventDefault();
             const tabName = this.getAttribute('data-tab');
@@ -173,7 +203,7 @@ function showTab(tabName) {
         btn.classList.remove('active');
     });
     
-    const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+    const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
     if (activeBtn) {
         activeBtn.classList.add('active');
     }
@@ -292,6 +322,42 @@ function setupEventListeners() {
         openModal('userModal', 'Ajouter un utilisateur');
     });
     
+    // Gérer le bouton d'ajout de membre
+    document.getElementById('addMemberBtn')?.addEventListener('click', function() {
+        // Réinitialiser le formulaire
+        const memberForm = document.getElementById('memberForm');
+        if (memberForm) {
+            memberForm.reset();
+        }
+        
+        // Ouvrir le modal avec le titre approprié
+        openModal('memberModal', 'Ajouter un membre');
+    });
+    
+    // Gérer le bouton d'ajout d'événement
+    document.getElementById('addEventBtn')?.addEventListener('click', function() {
+        // Réinitialiser le formulaire
+        const eventForm = document.getElementById('eventForm');
+        if (eventForm) {
+            eventForm.reset();
+        }
+        
+        // Ouvrir le modal avec le titre approprié
+        openModal('eventModal', 'Ajouter un événement');
+    });
+    
+    // Gérer le bouton de génération de rapport
+    document.getElementById('generateReportBtn')?.addEventListener('click', function() {
+        // Réinitialiser le formulaire
+        const reportForm = document.getElementById('reportForm');
+        if (reportForm) {
+            reportForm.reset();
+        }
+        
+        // Ouvrir le modal avec le titre approprié
+        openModal('reportModal', 'Générer un rapport');
+    });
+    
     // Gérer le bouton de génération de mot de passe
     document.getElementById('generatePassword')?.addEventListener('click', function() {
         generateRandomPassword();
@@ -308,9 +374,39 @@ function setupForms() {
     if (memberForm) {
         memberForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Logique de traitement du formulaire de membre
-            showNotification('Membre ajouté avec succès!', 'success');
-            closeModal('memberModal');
+            
+            // Récupérer les valeurs du formulaire
+            const memberName = document.getElementById('memberName').value;
+            const memberEmail = document.getElementById('memberEmail').value;
+            const memberRole = document.getElementById('memberRole').value;
+            const memberStatus = document.getElementById('memberStatus').value;
+            
+            // Préparer les données du membre
+            const memberData = {
+                fullName: memberName,
+                email: memberEmail,
+                role: memberRole,
+                joinDate: new Date().toISOString().split('T')[0],
+                status: memberStatus,
+                associatedUser: "Non assigné"
+            };
+            
+            try {
+                // Ajouter le membre via la base de données
+                const newMember = db.addMember(memberData);
+                
+                // Afficher un message de succès
+                showNotification('Membre ajouté avec succès!', 'success');
+                
+                // Fermer le modal
+                closeModal('memberModal');
+                
+                // Réinitialiser le formulaire
+                memberForm.reset();
+            } catch (error) {
+                console.error('Erreur lors de l\'ajout du membre:', error);
+                showNotification(error.message || 'Erreur lors de l\'ajout du membre.', 'error');
+            }
         });
     }
     
@@ -319,9 +415,41 @@ function setupForms() {
     if (contributionForm) {
         contributionForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Logique de traitement du formulaire de cotisation
-            showNotification('Cotisation enregistrée avec succès!', 'success');
-            closeModal('contributionModal');
+            
+            // Récupérer les valeurs du formulaire
+            const contributionMember = document.getElementById('contributionMember').value;
+            const contributionDate = document.getElementById('contributionDate').value;
+            const contributionAmount = document.getElementById('contributionAmount').value;
+            const contributionType = document.getElementById('contributionType').value;
+            
+            // Préparer les données de la cotisation
+            const contributionData = {
+                memberId: contributionMember,
+                date: contributionDate,
+                amount: parseFloat(contributionAmount),
+                type: contributionType,
+                status: "payée"
+            };
+            
+            try {
+                // Ajouter la cotisation via la base de données
+                const newContribution = db.addContribution(contributionData);
+                
+                // Mettre à jour les statistiques
+                updateStats();
+                
+                // Afficher un message de succès
+                showNotification('Cotisation enregistrée avec succès!', 'success');
+                
+                // Fermer le modal
+                closeModal('contributionModal');
+                
+                // Réinitialiser le formulaire
+                contributionForm.reset();
+            } catch (error) {
+                console.error('Erreur lors de l\'enregistrement de la cotisation:', error);
+                showNotification(error.message || 'Erreur lors de l\'enregistrement de la cotisation.', 'error');
+            }
         });
     }
     
@@ -330,9 +458,41 @@ function setupForms() {
     if (eventForm) {
         eventForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Logique de traitement du formulaire d'événement
-            showNotification('Événement ajouté avec succès!', 'success');
-            closeModal('eventModal');
+            
+            // Récupérer les valeurs du formulaire
+            const eventTitle = document.getElementById('eventTitle').value;
+            const eventDate = document.getElementById('eventDate').value;
+            const eventTime = document.getElementById('eventTime').value;
+            const eventLocation = document.getElementById('eventLocation').value;
+            const eventDescription = document.getElementById('eventDescription').value;
+            const eventStatus = document.getElementById('eventStatus').value;
+            
+            // Préparer les données de l'événement
+            const eventData = {
+                title: eventTitle,
+                date: eventDate,
+                time: eventTime,
+                location: eventLocation,
+                description: eventDescription,
+                status: eventStatus
+            };
+            
+            try {
+                // Ajouter l'événement via la base de données
+                const newEvent = db.addEvent(eventData);
+                
+                // Afficher un message de succès
+                showNotification('Événement ajouté avec succès!', 'success');
+                
+                // Fermer le modal
+                closeModal('eventModal');
+                
+                // Réinitialiser le formulaire
+                eventForm.reset();
+            } catch (error) {
+                console.error('Erreur lors de l\'ajout de l\'événement:', error);
+                showNotification(error.message || 'Erreur lors de l\'ajout de l\'événement.', 'error');
+            }
         });
     }
     
@@ -354,6 +514,21 @@ function setupForms() {
             // Vérifier que les mots de passe correspondent
             if (password !== confirmPassword) {
                 showNotification('Les mots de passe ne correspondent pas.', 'error');
+                return;
+            }
+            
+            // Vérifier que le rôle est valide
+            const currentUserRole = db.getCurrentUserRole();
+            const validRoles = [];
+            
+            if (currentUserRole === 'superadmin') {
+                validRoles.push('administrateur', 'trésorier', 'secrétaire', 'membre');
+            } else if (currentUserRole === 'administrateur') {
+                validRoles.push('trésorier', 'secrétaire', 'membre');
+            }
+            
+            if (!validRoles.includes(role)) {
+                showNotification('Vous n\'avez pas la permission de créer un utilisateur avec ce rôle.', 'error');
                 return;
             }
             
@@ -402,9 +577,37 @@ function setupForms() {
     if (profileForm) {
         profileForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Logique de traitement du formulaire de profil
-            showNotification('Profil ajouté avec succès!', 'success');
-            closeModal('profileModal');
+            
+            // Récupérer les valeurs du formulaire
+            const profileName = document.getElementById('profileName').value;
+            const profileEmail = document.getElementById('profileEmail').value;
+            const profilePhone = document.getElementById('profilePhone').value;
+            const profileAddress = document.getElementById('profileAddress').value;
+            
+            // Préparer les données du profil
+            const profileData = {
+                name: profileName,
+                email: profileEmail,
+                phone: profilePhone,
+                address: profileAddress
+            };
+            
+            try {
+                // Ajouter le profil via la base de données
+                const newProfile = db.addProfile(profileData);
+                
+                // Afficher un message de succès
+                showNotification('Profil ajouté avec succès!', 'success');
+                
+                // Fermer le modal
+                closeModal('profileModal');
+                
+                // Réinitialiser le formulaire
+                profileForm.reset();
+            } catch (error) {
+                console.error('Erreur lors de l\'ajout du profil:', error);
+                showNotification(error.message || 'Erreur lors de l\'ajout du profil.', 'error');
+            }
         });
     }
     
@@ -413,10 +616,34 @@ function setupForms() {
     if (reportForm) {
         reportForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Logique de traitement du formulaire de rapport
-            showNotification('Rapport en cours de génération...', 'info');
-            simulateReportGeneration();
-            closeModal('reportModal');
+            
+            // Récupérer les valeurs du formulaire
+            const reportTitle = document.getElementById('reportTitle').value;
+            const reportType = document.getElementById('reportType').value;
+            const reportPeriod = document.getElementById('reportPeriod').value;
+            
+            // Préparer les données du rapport
+            const reportData = {
+                title: reportTitle,
+                type: reportType,
+                period: reportPeriod,
+                generatedAt: new Date().toISOString()
+            };
+            
+            try {
+                // Générer le rapport
+                showNotification('Rapport en cours de génération...', 'info');
+                simulateReportGeneration(reportData);
+                
+                // Fermer le modal
+                closeModal('reportModal');
+                
+                // Réinitialiser le formulaire
+                reportForm.reset();
+            } catch (error) {
+                console.error('Erreur lors de la génération du rapport:', error);
+                showNotification(error.message || 'Erreur lors de la génération du rapport.', 'error');
+            }
         });
     }
     
@@ -429,6 +656,14 @@ function setupForms() {
             showNotification('Paramètres enregistrés avec succès!', 'success');
         });
     }
+    
+    // Gérer les boutons "Retour" dans les formulaires
+    document.getElementById('cancelMember')?.addEventListener('click', () => closeModal('memberModal'));
+    document.getElementById('cancelContribution')?.addEventListener('click', () => closeModal('contributionModal'));
+    document.getElementById('cancelEvent')?.addEventListener('click', () => closeModal('eventModal'));
+    document.getElementById('cancelUser')?.addEventListener('click', () => closeModal('userModal'));
+    document.getElementById('cancelProfile')?.addEventListener('click', () => closeModal('profileModal'));
+    document.getElementById('cancelReport')?.addEventListener('click', () => closeModal('reportModal'));
 }
 
 // Mettre à jour le tableau des utilisateurs
@@ -472,6 +707,17 @@ function updateUsersTable() {
                 let statusClass = user.status === 'actif' ? 'active' : 'inactive';
                 let statusText = user.status === 'actif' ? 'Actif' : 'Inactif';
                 
+                // Obtenir le rôle de l'utilisateur connecté
+                const currentUserRole = db.getCurrentUserRole();
+                
+                // Déterminer si l'utilisateur peut être supprimé
+                let canDelete = true;
+                if (user.role === 'superadmin') {
+                    canDelete = false;
+                } else if (currentUserRole === 'administrateur' && user.role === 'administrateur') {
+                    canDelete = false;
+                }
+                
                 row.innerHTML = `
                     <td>${user.fullName || 'N/A'}</td>
                     <td>${user.username}</td>
@@ -481,7 +727,7 @@ function updateUsersTable() {
                     <td><span class="status ${statusClass}">${statusText}</span></td>
                     <td>
                         <button class="btn-icon edit"><i class="fas fa-edit"></i></button>
-                        <button class="btn-icon delete${user.role === 'superadmin' ? ' disabled' : ''}"><i class="fas fa-trash"></i></button>
+                        <button class="btn-icon delete${canDelete ? '' : ' disabled'}"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
                 
@@ -541,15 +787,28 @@ function generateRandomPassword() {
 }
 
 // Simuler la génération d'un rapport
-function simulateReportGeneration() {
+function simulateReportGeneration(reportData) {
     // Afficher l'overlay de chargement
     showLoading();
     
     // Simuler un délai de traitement
     setTimeout(() => {
         hideLoading();
-        showNotification('Rapport généré avec succès! Vous pouvez maintenant le télécharger.', 'success');
+        
+        // Créer un message de succès avec les détails du rapport
+        const successMessage = `Rapport "${reportData.type}" généré avec succès! Vous pouvez maintenant le télécharger au format ${reportData.format}.`;
+        showNotification(successMessage, 'success');
+        
+        // Mettre à jour l'interface pour montrer que le rapport est disponible
+        updateReportsDisplay(reportData);
     }, 3000);
+}
+
+// Mettre à jour l'affichage des rapports
+function updateReportsDisplay(reportData) {
+    // Cette fonction mettrait à jour l'interface utilisateur pour montrer le nouveau rapport
+    // Pour l'instant, nous simulons cela avec une notification
+    console.log('Mise à jour de l\'affichage des rapports avec:', reportData);
 }
 
 // Simuler le téléchargement d'un rapport
@@ -618,4 +877,104 @@ function showNotification(message, type = 'info') {
             notification.remove();
         }
     }, 5000);
+}
+
+// Configurer les gestionnaires d'événements pour les actions CRUD
+function setupTableActions() {
+    // Gérer les clics sur les boutons d'édition et de suppression
+    document.addEventListener('click', function(e) {
+        // Gérer les boutons d'édition dans les tableaux
+        if (e.target.closest('.btn-icon.edit')) {
+            const row = e.target.closest('tr');
+            if (row) {
+                handleEditRow(row);
+            }
+        }
+        
+        // Gérer les boutons de suppression dans les tableaux
+        if (e.target.closest('.btn-icon.delete')) {
+            const row = e.target.closest('tr');
+            if (row) {
+                handleDeleteRow(row);
+            }
+        }
+        
+        // Gérer les boutons d'édition dans les cartes (événements)
+        if (e.target.closest('.event-actions .btn-icon.edit')) {
+            const card = e.target.closest('.event-card');
+            if (card) {
+                handleEditEvent(card);
+            }
+        }
+        
+        // Gérer les boutons de suppression dans les cartes (événements)
+        if (e.target.closest('.event-actions .btn-icon.delete')) {
+            const card = e.target.closest('.event-card');
+            if (card && confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
+                handleDeleteEvent(card);
+            }
+        }
+    });
+}
+
+// Gérer l'édition d'une ligne de tableau
+function handleEditRow(row) {
+    const cells = row.querySelectorAll('td');
+    const tableName = row.closest('table').id.replace('TableBody', '');
+    
+    // Afficher une notification avec les détails de la ligne
+    let message = `Modification de l'élément dans la table ${tableName}:\n`;
+    cells.forEach((cell, index) => {
+        if (index < cells.length - 1) { // Exclure la colonne des actions
+            const header = row.closest('table').querySelector('th:nth-child(' + (index + 1) + ')');
+            const headerText = header ? header.textContent : 'Colonne ' + (index + 1);
+            message += `- ${headerText}: ${cell.textContent}\n`;
+        }
+    });
+    
+    showNotification(message, 'info');
+    
+    // Ici, vous pouvez ajouter la logique pour ouvrir un modal d'édition
+    // avec les données de la ligne sélectionnée
+    console.log('Édition de la ligne:', row);
+}
+
+// Gérer la suppression d'une ligne de tableau
+function handleDeleteRow(row) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
+        const tableName = row.closest('table').id.replace('TableBody', '');
+        
+        // Supprimer la ligne du DOM
+        row.remove();
+        
+        // Afficher une notification de succès
+        showNotification(`Élément supprimé avec succès de la table ${tableName}`, 'success');
+        
+        // Ici, vous pouvez ajouter la logique pour supprimer l'élément de la base de données
+        console.log('Suppression de la ligne:', row);
+    }
+}
+
+// Gérer l'édition d'un événement
+function handleEditEvent(card) {
+    const title = card.querySelector('h3').textContent;
+    showNotification(`Modification de l'événement: ${title}`, 'info');
+    
+    // Ici, vous pouvez ajouter la logique pour ouvrir un modal d'édition
+    // avec les données de l'événement sélectionné
+    console.log('Édition de l\'événement:', card);
+}
+
+// Gérer la suppression d'un événement
+function handleDeleteEvent(card) {
+    const title = card.querySelector('h3').textContent;
+    
+    // Supprimer la carte du DOM
+    card.remove();
+    
+    // Afficher une notification de succès
+    showNotification(`Événement "${title}" supprimé avec succès`, 'success');
+    
+    // Ici, vous pouvez ajouter la logique pour supprimer l'événement de la base de données
+    console.log('Suppression de l\'événement:', card);
 }
