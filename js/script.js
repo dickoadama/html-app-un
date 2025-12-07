@@ -361,7 +361,7 @@ function setupTableActions() {
         }
         
         // Gérer les boutons de téléchargement dans les rapports
-        if (e.target.closest('.btn.download')) {
+        if (e.target.closest('.btn.download') || e.target.closest('.btn.btn-secondary .fa-download')) {
             const card = e.target.closest('.report-card');
             if (card) {
                 // Obtenir le nom du rapport à partir du titre
